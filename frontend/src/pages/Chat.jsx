@@ -2,7 +2,7 @@ import ChatPanel from '../components/chat/ChatPanel';
 
 export default function Chat() {
   return (
-    <div className="page-enter">
+    <div className="app-content page-enter">
       <ChatPanel />
     </div>
   );

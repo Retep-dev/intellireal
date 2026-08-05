@@ -1,85 +1,151 @@
 import { NavLink, useLocation } from 'react-router-dom';
 import {
-  LayoutDashboard,
+  BarChart2,
   FileText,
   MessageSquare,
   Search,
-  Globe,
-  Shield,
   TrendingUp,
+  Shield,
   Settings,
   LogOut,
+  Sparkles,
+  PieChart,
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 
-const navItems = [
-  {
-    section: 'Main',
-    items: [
-      { to: '/', icon: LayoutDashboard, label: 'Dashboard' },
-      { to: '/documents', icon: FileText, label: 'Documents' },
-      { to: '/chat', icon: MessageSquare, label: 'Chat' },
-    ],
-  },
-  {
-    section: 'Coming Soon',
-    items: [
-      { to: '/edgar', icon: Search, label: 'SEC EDGAR', badge: 'Phase 2' },
-      { to: '/analytics', icon: TrendingUp, label: 'Analytics', badge: 'Phase 2' },
-      { to: '/risks', icon: Shield, label: 'Risk Monitor', badge: 'Phase 2' },
-      { to: '/graph', icon: Globe, label: 'Knowledge Graph', badge: 'Phase 3' },
-    ],
-  },
-];
-
 export default function Sidebar() {
-  const { signOut, user } = useAuth();
+  const { signOut } = useAuth();
   const location = useLocation();
 
+  const isCurrent = (path) => location.pathname === path;
+
   return (
-    <aside className="sidebar">
-      {/* Logo */}
-      <div className="sidebar-logo">
-        <div className="sidebar-logo-icon">IR</div>
-        <span className="sidebar-logo-text">IntelliReal</span>
+    <aside className="sidebar-container">
+      {/* 1. Left Narrow Icon Rail */}
+      <div className="icon-rail">
+        <div className="rail-logo" title="IntelliReal">
+          <div className="rail-logo-icon">IR</div>
+        </div>
+
+        <NavLink
+          to="/"
+          className={`rail-item ${isCurrent('/') ? 'active' : ''}`}
+          title="Reports Snapshot"
+        >
+          <BarChart2 size={20} />
+        </NavLink>
+
+        <NavLink
+          to="/documents"
+          className={`rail-item ${isCurrent('/documents') ? 'active' : ''}`}
+          title="Documents"
+        >
+          <FileText size={20} />
+        </NavLink>
+
+        <NavLink
+          to="/chat"
+          className={`rail-item ${isCurrent('/chat') ? 'active' : ''}`}
+          title="Financial Chat"
+        >
+          <MessageSquare size={20} />
+        </NavLink>
+
+        <div className="rail-item" title="SEC EDGAR (Phase 2)" style={{ opacity: 0.5 }}>
+          <Search size={20} />
+        </div>
+
+        <div className="rail-item" title="Analytics (Phase 2)" style={{ opacity: 0.5 }}>
+          <TrendingUp size={20} />
+        </div>
+
+        <div className="rail-item" title="Risk Monitor (Phase 2)" style={{ opacity: 0.5 }}>
+          <Shield size={20} />
+        </div>
+
+        {/* Bottom Rail items */}
+        <div className="rail-bottom">
+          <button className="rail-item" title="Settings">
+            <Settings size={20} />
+          </button>
+          <button className="rail-item" onClick={() => signOut()} title="Sign Out">
+            <LogOut size={20} color="var(--google-red)" />
+          </button>
+        </div>
       </div>
 
-      {/* Navigation */}
-      <nav className="sidebar-nav">
-        {navItems.map((section) => (
-          <div key={section.section}>
-            <div className="sidebar-section-label">{section.section}</div>
-            {section.items.map((item) => {
-              const Icon = item.icon;
-              const isActive = location.pathname === item.to;
-              const isDisabled = !!item.badge;
+      {/* 2. Sub-Navigation Expansion Panel (GA4 Style) */}
+      <div className="subnav-panel">
+        <div className="subnav-title">
+          <BarChart2 size={16} />
+          <span>Reports snapshot</span>
+        </div>
 
-              return (
-                <NavLink
-                  key={item.to}
-                  to={isDisabled ? '#' : item.to}
-                  className={`sidebar-link ${isActive ? 'active' : ''}`}
-                  onClick={(e) => isDisabled && e.preventDefault()}
-                  style={isDisabled ? { opacity: 0.5, cursor: 'default' } : {}}
-                >
-                  <Icon />
-                  <span>{item.label}</span>
-                  {item.badge && (
-                    <span className="sidebar-badge">{item.badge}</span>
-                  )}
-                </NavLink>
-              );
-            })}
+        <div>
+          <div className="subnav-group-label">Life cycle</div>
+          
+          <NavLink
+            to="/"
+            className={`subnav-item ${isCurrent('/') ? 'active' : ''}`}
+          >
+            <span>Overview</span>
+          </NavLink>
+
+          <NavLink
+            to="/documents"
+            className={`subnav-item ${isCurrent('/documents') ? 'active' : ''}`}
+          >
+            <span>Documents</span>
+          </NavLink>
+
+          <NavLink
+            to="/chat"
+            className={`subnav-item ${isCurrent('/chat') ? 'active' : ''}`}
+          >
+            <span>Financial Chat</span>
+          </NavLink>
+        </div>
+
+        <div>
+          <div className="subnav-group-label">Financial Agents</div>
+          
+          <div className="subnav-item active" style={{ background: 'transparent' }}>
+            <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <Sparkles size={14} color="var(--google-blue)" /> Research Agent
+            </span>
           </div>
-        ))}
-      </nav>
 
-      {/* Footer */}
-      <div className="sidebar-footer">
-        <button className="sidebar-link" onClick={() => signOut()}>
-          <LogOut />
-          <span>Sign Out</span>
-        </button>
+          <div className="subnav-item" style={{ opacity: 0.8 }}>
+            <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <PieChart size={14} color="var(--google-green)" /> Summary Agent
+            </span>
+          </div>
+
+          <div className="subnav-item" style={{ opacity: 0.5 }}>
+            <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <Shield size={14} /> Risk Analysis
+            </span>
+            <span className="subnav-badge">Phase 2</span>
+          </div>
+
+          <div className="subnav-item" style={{ opacity: 0.5 }}>
+            <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <TrendingUp size={14} /> Market Trends
+            </span>
+            <span className="subnav-badge">Phase 2</span>
+          </div>
+        </div>
+
+        <div>
+          <div className="subnav-group-label">User & System</div>
+          <button
+            className="subnav-item"
+            style={{ width: '100%', border: 'none', background: 'none', textDecoration: 'none' }}
+            onClick={() => signOut()}
+          >
+            <span style={{ color: 'var(--google-red)' }}>Sign Out</span>
+          </button>
+        </div>
       </div>
     </aside>
   );

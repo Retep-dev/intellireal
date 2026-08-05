@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Upload, RefreshCw } from 'lucide-react';
+import { Upload, RefreshCw, FileText } from 'lucide-react';
 import DocumentList from '../components/documents/DocumentList';
 import UploadModal from '../components/documents/UploadModal';
 import { apiRequest } from '../lib/supabase';
@@ -41,7 +41,7 @@ export default function Documents() {
   };
 
   return (
-    <div className="page-enter">
+    <div className="app-content page-enter">
       {/* Header */}
       <div style={{
         display: 'flex',
@@ -50,9 +50,9 @@ export default function Documents() {
         marginBottom: 20,
       }}>
         <div>
-          <h2 style={{ fontSize: 20, fontWeight: 700 }}>Documents</h2>
-          <p style={{ color: 'var(--text-secondary)', fontSize: 14, marginTop: 4 }}>
-            Upload and manage your financial documents
+          <h1 className="page-title">Documents & Filings</h1>
+          <p style={{ color: 'var(--text-secondary)', fontSize: 13, marginTop: 4 }}>
+            Upload and manage financial documents for AI-powered RAG and analytics
           </p>
         </div>
         <div style={{ display: 'flex', gap: 10 }}>
@@ -70,9 +70,9 @@ export default function Documents() {
         display: 'flex',
         gap: 24,
         padding: '12px 16px',
-        background: 'var(--bg-card)',
+        background: 'var(--bg-surface)',
         borderRadius: 'var(--radius-md)',
-        border: '1px solid var(--border-primary)',
+        border: '1px solid var(--border-color)',
         marginBottom: 16,
         fontSize: 13,
         color: 'var(--text-secondary)',
@@ -86,14 +86,14 @@ export default function Documents() {
           </strong> total chunks
         </span>
         <span>
-          Supported: PDF, DOCX, XLSX, CSV, TXT, HTML
+          Formats: PDF, DOCX, XLSX, CSV, TXT, HTML
         </span>
       </div>
 
       {/* Document List */}
       {loading ? (
         <div style={{ textAlign: 'center', padding: 60 }}>
-          <div className="spinner" style={{ width: 32, height: 32, margin: '0 auto' }} />
+          <div className="spinner" style={{ width: 28, height: 28, margin: '0 auto' }} />
         </div>
       ) : (
         <DocumentList documents={documents} onDelete={handleDelete} />
