@@ -1,6 +1,6 @@
 """
 IntelliReal - Document API
-Upload, list, and manage financial documents.
+Upload, list, manage financial documents, and calculate realtime stats.
 """
 
 import uuid
@@ -57,7 +57,6 @@ async def upload_document(
     4. Chunks the text
     5. Embeds chunks in ChromaDB
     """
-    # Validate file type
     if not file.filename:
         raise HTTPException(status_code=400, detail="Filename is required")
 
@@ -204,6 +203,42 @@ async def list_documents(
             )
 
     return DocumentListResponse(documents=documents, total=len(documents))
+
+
+@router.get("/stats")
+async def get_dashboard_stats(
+    user_id: str = Depends(_get_user_dependency()),
+):
+    """
+    Get realtime dashboard analytics calculated dynamically from uploaded documents.
+    """
+    docs_response = await list_documents(user_id=user_id)
+    documents = docs_response.documents
+    total_docs = len(documents)
+    total_chunks = sum(d.num_chunks for d in documents)
+
+    # Document type breakdown
+    type_counts = {}
+    for d in documents:
+        dtype = (d.document_type or "other").replace("_", " ").upper()
+        type_counts[dtype] = type_counts.get(dtype, 0) + 1
+
+    # Format chart data
+    category_chart_data = [
+        {"name": k, "value": v} for k, v in type_counts.items()
+    ] if type_counts else [
+        {"name": "SEC FILING", "value": 0},
+        {"name": "EARNINGS", "value": 0},
+        {"name": "ANNUAL", "value": 0},
+    ]
+
+    return {
+        "total_documents": total_docs,
+        "total_chunks": total_chunks,
+        "type_counts": type_counts,
+        "category_chart_data": category_chart_data,
+        "recent_documents": [d.dict() for d in documents[:5]],
+    }
 
 
 @router.delete("/{document_id}")
