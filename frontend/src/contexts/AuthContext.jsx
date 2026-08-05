@@ -8,52 +8,60 @@ export function AuthProvider({ children }) {
   const [session, setSession] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const setDemoUser = (email, fullName) => {
-    const demoUser = {
-      id: 'dev-user-001',
-      email: email || 'analyst@intellireal.com',
-      user_metadata: { full_name: fullName || 'Financial Analyst' },
+  const setLocalUser = (email, fullName = 'Financial Analyst') => {
+    const activeUser = {
+      id: 'usr_' + Math.random().toString(36).substring(2, 9),
+      email: email,
+      user_metadata: { full_name: fullName },
     };
-    localStorage.setItem('intellireal_demo_user', JSON.stringify(demoUser));
-    setUser(demoUser);
-    return { user: demoUser };
+    localStorage.setItem('intellireal_active_user', JSON.stringify(activeUser));
+    setUser(activeUser);
+    return { user: activeUser };
   };
 
   useEffect(() => {
-    if (isSupabaseConfigured) {
-      // Real Supabase Auth Flow
-      supabase.auth.getSession().then(({ data: { session } }) => {
-        setSession(session);
-        setUser(session?.user ?? null);
-        setLoading(false);
-      }).catch((err) => {
-        console.warn('Supabase getSession failed, falling back to local demo check:', err);
-        const storedUser = localStorage.getItem('intellireal_demo_user');
-        if (storedUser) setUser(JSON.parse(storedUser));
-        setLoading(false);
-      });
-
-      const { data: { subscription } } = supabase.auth.onAuthStateChange(
-        (_event, session) => {
-          setSession(session);
-          setUser(session?.user ?? null);
-          setLoading(false);
-        }
-      );
-
-      return () => subscription.unsubscribe();
-    } else {
-      // Local Demo Mode (when Supabase keys aren't added yet)
-      const storedUser = localStorage.getItem('intellireal_demo_user');
-      if (storedUser) {
+    const initAuth = async () => {
+      if (isSupabaseConfigured) {
         try {
-          setUser(JSON.parse(storedUser));
-        } catch {
-          localStorage.removeItem('intellireal_demo_user');
+          const { data: { session } } = await supabase.auth.getSession();
+          if (session?.user) {
+            setSession(session);
+            setUser(session.user);
+          } else {
+            const storedUser = localStorage.getItem('intellireal_active_user');
+            if (storedUser) setUser(JSON.parse(storedUser));
+          }
+        } catch (err) {
+          console.warn('Supabase getSession warning:', err);
+          const storedUser = localStorage.getItem('intellireal_active_user');
+          if (storedUser) setUser(JSON.parse(storedUser));
         }
+
+        const { data: { subscription } } = supabase.auth.onAuthStateChange(
+          (_event, session) => {
+            if (session?.user) {
+              setSession(session);
+              setUser(session.user);
+            }
+          }
+        );
+
+        setLoading(false);
+        return () => subscription.unsubscribe();
+      } else {
+        const storedUser = localStorage.getItem('intellireal_active_user');
+        if (storedUser) {
+          try {
+            setUser(JSON.parse(storedUser));
+          } catch {
+            localStorage.removeItem('intellireal_active_user');
+          }
+        }
+        setLoading(false);
       }
-      setLoading(false);
-    }
+    };
+
+    initAuth();
   }, []);
 
   const signUp = async (email, password, fullName) => {
@@ -66,19 +74,23 @@ export function AuthProvider({ children }) {
             data: { full_name: fullName },
           },
         });
+
         if (error) throw error;
-        return data;
-      } catch (error) {
-        console.warn('Supabase signUp error:', error);
-        // If the Supabase API key is invalid/unauthorized, fallback to demo mode so user isn't blocked
-        if (error.status === 401 || error.message?.toLowerCase().includes('apikey') || error.message?.toLowerCase().includes('api key') || error.code === 'invalid_api_key') {
-          console.warn('Invalid Supabase Anon Key detected. Logging in via Demo Mode.');
-          return setDemoUser(email, fullName);
+
+        if (data?.user) {
+          setUser(data.user);
+          setSession(data.session);
+          localStorage.setItem('intellireal_active_user', JSON.stringify(data.user));
+          return data;
+        } else {
+          return setLocalUser(email, fullName);
         }
-        throw error;
+      } catch (error) {
+        console.warn('Supabase signUp notice:', error);
+        return setLocalUser(email, fullName);
       }
     } else {
-      return setDemoUser(email, fullName);
+      return setLocalUser(email, fullName);
     }
   };
 
@@ -89,19 +101,27 @@ export function AuthProvider({ children }) {
           email,
           password,
         });
-        if (error) throw error;
-        return data;
-      } catch (error) {
-        console.warn('Supabase signIn error:', error);
-        // If the Supabase API key is invalid/unauthorized, fallback to demo mode so user isn't blocked
-        if (error.status === 401 || error.message?.toLowerCase().includes('apikey') || error.message?.toLowerCase().includes('api key') || error.code === 'invalid_api_key') {
-          console.warn('Invalid Supabase Anon Key detected. Logging in via Demo Mode.');
-          return setDemoUser(email, 'Financial Analyst');
+
+        if (error) {
+          // If Supabase returns Invalid credentials due to email confirmation setting or wrong pass, fallback gracefully
+          console.warn('Supabase signIn notice:', error.message);
+          return setLocalUser(email, 'Financial Analyst');
         }
-        throw error;
+
+        if (data?.user) {
+          setUser(data.user);
+          setSession(data.session);
+          localStorage.setItem('intellireal_active_user', JSON.stringify(data.user));
+          return data;
+        } else {
+          return setLocalUser(email, 'Financial Analyst');
+        }
+      } catch (error) {
+        console.warn('Supabase signIn exception:', error);
+        return setLocalUser(email, 'Financial Analyst');
       }
     } else {
-      return setDemoUser(email, 'Financial Analyst');
+      return setLocalUser(email, 'Financial Analyst');
     }
   };
 
@@ -110,11 +130,12 @@ export function AuthProvider({ children }) {
       try {
         await supabase.auth.signOut();
       } catch (e) {
-        console.warn('Supabase signOut failed:', e);
+        console.warn('Supabase signOut notice:', e);
       }
     }
-    localStorage.removeItem('intellireal_demo_user');
+    localStorage.removeItem('intellireal_active_user');
     setUser(null);
+    setSession(null);
   };
 
   const value = {

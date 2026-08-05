@@ -1,14 +1,14 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { Info, Sparkles, AlertCircle } from 'lucide-react';
+import { AlertCircle } from 'lucide-react';
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const { signIn, isSupabaseConfigured } = useAuth();
+  const { signIn } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -21,23 +21,7 @@ export default function Login() {
       navigate('/');
     } catch (err) {
       console.warn('Sign in error:', err);
-      if (err.message?.includes('Invalid login credentials')) {
-        setError('Invalid credentials. If you just created an account, please check your email inbox to confirm your registration, or click "⚡ Quick Demo Login" below.');
-      } else {
-        setError(err.message || 'Failed to sign in');
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleDemoLogin = async () => {
-    setLoading(true);
-    try {
-      await signIn('analyst@intellireal.com', 'demo123456');
-      navigate('/');
-    } catch (e) {
-      console.error('Demo login failed:', e);
+      setError(err.message || 'Failed to sign in');
     } finally {
       setLoading(false);
     }
@@ -53,19 +37,8 @@ export default function Login() {
         </div>
 
         {error && (
-          <div style={{
-            padding: '10px 14px',
-            background: 'var(--google-red-light)',
-            border: '1px solid var(--google-red)',
-            borderRadius: '6px',
-            color: 'var(--google-red)',
-            fontSize: '12.5px',
-            marginBottom: '16px',
-            display: 'flex',
-            alignItems: 'flex-start',
-            gap: '8px',
-          }}>
-            <AlertCircle size={16} style={{ flexShrink: 0, marginTop: '2px' }} />
+          <div className="auth-error" style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
+            <AlertCircle size={16} style={{ flexShrink: 0 }} />
             <div>{error}</div>
           </div>
         )}
@@ -96,25 +69,12 @@ export default function Login() {
             />
           </div>
 
-          <button className="btn btn-primary btn-lg" type="submit" disabled={loading} style={{ width: '100%', marginBottom: 10 }}>
+          <button className="btn btn-primary btn-lg" type="submit" disabled={loading} style={{ width: '100%', marginTop: 8 }}>
             {loading ? <div className="spinner" /> : 'Sign In'}
           </button>
         </form>
 
-        {/* 1-Click Quick Demo Login Button */}
-        <div style={{ marginTop: 12, textAlign: 'center' }}>
-          <button
-            type="button"
-            className="btn btn-secondary"
-            onClick={handleDemoLogin}
-            disabled={loading}
-            style={{ width: '100%', fontSize: 13, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}
-          >
-            <Sparkles size={14} color="var(--google-purple)" /> ⚡ Quick Demo Sign In
-          </button>
-        </div>
-
-        <div className="auth-footer" style={{ marginTop: 16 }}>
+        <div className="auth-footer">
           Don't have an account?{' '}
           <Link to="/signup">Create one</Link>
         </div>
