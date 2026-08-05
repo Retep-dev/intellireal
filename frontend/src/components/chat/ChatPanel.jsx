@@ -6,10 +6,10 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
 const AGENTS = [
-  { type: 'research', label: '🔍 Research Agent' },
-  { type: 'summary', label: '📋 Summary Agent' },
-  { type: 'risk', label: '⚠️ Risk Analysis' },
-  { type: 'trend', label: '📈 Market Trends' },
+  { type: 'research', label: 'Research Agent', icon: Search },
+  { type: 'summary', label: 'Summary Agent', icon: PieChart },
+  { type: 'risk', label: 'Risk Analysis', icon: Shield },
+  { type: 'trend', label: 'Market Trends', icon: TrendingUp },
 ];
 
 const AGENT_CONFIGS = {
@@ -184,15 +184,20 @@ export default function ChatPanel() {
 
         {/* Agent Selector Segment Pills */}
         <div className="agent-selector">
-          {AGENTS.map(agent => (
-            <button
-              key={agent.type}
-              className={`agent-option ${selectedAgent === agent.type ? 'active' : ''}`}
-              onClick={() => handleSelectAgent(agent.type)}
-            >
-              {agent.label}
-            </button>
-          ))}
+          {AGENTS.map(agent => {
+            const IconComp = agent.icon;
+            const isActive = selectedAgent === agent.type;
+            return (
+              <button
+                key={agent.type}
+                className={`agent-option ${agent.type} ${isActive ? 'active' : ''}`}
+                onClick={() => handleSelectAgent(agent.type)}
+              >
+                <IconComp size={13} />
+                <span>{agent.label}</span>
+              </button>
+            );
+          })}
         </div>
       </div>
 
