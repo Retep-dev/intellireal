@@ -3,16 +3,25 @@ import { createClient } from '@supabase/supabase-js';
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-if (!supabaseUrl || !supabaseAnonKey) {
+export const isSupabaseConfigured = Boolean(
+  supabaseUrl &&
+  supabaseAnonKey &&
+  !supabaseUrl.includes('your-project') &&
+  !supabaseUrl.includes('placeholder') &&
+  !supabaseAnonKey.includes('your-anon-key') &&
+  !supabaseAnonKey.includes('placeholder')
+);
+
+if (!isSupabaseConfigured) {
   console.warn(
-    'Supabase credentials not found. Auth features will be disabled. ' +
-    'Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in .env.local'
+    'Supabase credentials not configured or set to placeholder values. ' +
+    'Running in Local Demo Auth Mode. To enable real auth, update frontend/.env.local'
   );
 }
 
 export const supabase = createClient(
-  supabaseUrl || 'https://placeholder.supabase.co',
-  supabaseAnonKey || 'placeholder-key'
+  isSupabaseConfigured ? supabaseUrl : 'https://placeholder.supabase.co',
+  isSupabaseConfigured ? supabaseAnonKey : 'placeholder-key'
 );
 
 export const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
