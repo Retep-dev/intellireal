@@ -12,6 +12,7 @@ from config import get_settings
 from api.health import router as health_router
 from api.documents import router as documents_router
 from api.chat import router as chat_router
+from api.sec import router as sec_router
 
 # Configure logging
 logging.basicConfig(
@@ -45,7 +46,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="IntelliReal API",
     description="Financial Intelligence Platform — AI-powered document analysis with multi-agent RAG",
-    version="0.1.0",
+    version="0.2.0",
     lifespan=lifespan,
 )
 
@@ -63,6 +64,7 @@ app.add_middleware(
 app.include_router(health_router, prefix="/api")
 app.include_router(documents_router, prefix="/api")
 app.include_router(chat_router, prefix="/api")
+app.include_router(sec_router, prefix="/api")
 
 
 @app.get("/")
@@ -70,7 +72,7 @@ async def root():
     """Root endpoint — API info."""
     return {
         "name": "IntelliReal API",
-        "version": "0.1.0",
+        "version": "0.2.0",
         "description": "Financial Intelligence Platform",
         "docs": "/docs",
         "health": "/api/health",

@@ -314,7 +314,7 @@ export default function Dashboard() {
               <span className="doc-status processed">Active</span>
             </div>
 
-            <div className="doc-item" style={{ opacity: 0.7 }}>
+            <div className="doc-item" onClick={() => navigate('/chat')}>
               <div className="doc-icon" style={{ background: 'var(--google-yellow-light)', color: 'var(--google-yellow)' }}>
                 <Shield size={16} />
               </div>
@@ -322,10 +322,10 @@ export default function Dashboard() {
                 <div className="doc-name">Risk Analysis Agent</div>
                 <div className="doc-meta">Risk factor detection & litigation monitoring</div>
               </div>
-              <span className="subnav-badge">Phase 2</span>
+              <span className="doc-status processed">Active</span>
             </div>
 
-            <div className="doc-item" style={{ opacity: 0.7 }}>
+            <div className="doc-item" onClick={() => navigate('/chat')}>
               <div className="doc-icon" style={{ background: 'var(--google-purple-light)', color: 'var(--google-purple)' }}>
                 <TrendingUp size={16} />
               </div>
@@ -333,7 +333,7 @@ export default function Dashboard() {
                 <div className="doc-name">Market Trend Agent</div>
                 <div className="doc-meta">Trend extraction & guidance sentiment analysis</div>
               </div>
-              <span className="subnav-badge">Phase 2</span>
+              <span className="doc-status processed">Active</span>
             </div>
           </div>
         </div>

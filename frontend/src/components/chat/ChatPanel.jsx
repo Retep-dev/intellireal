@@ -7,8 +7,8 @@ import remarkGfm from 'remark-gfm';
 const AGENTS = [
   { type: 'research', label: '🔍 Research Agent', available: true },
   { type: 'summary', label: '📋 Summary Agent', available: true },
-  { type: 'risk', label: '⚠️ Risk Analysis', available: false },
-  { type: 'trend', label: '📈 Market Trends', available: false },
+  { type: 'risk', label: '⚠️ Risk Analysis', available: true },
+  { type: 'trend', label: '📈 Market Trends', available: true },
 ];
 
 const SUGGESTED_PROMPTS = [
@@ -32,17 +32,17 @@ const SUGGESTED_PROMPTS = [
     icon: Shield,
     color: 'var(--google-yellow)',
     bg: 'var(--google-yellow-light)',
-    title: 'Risk Factor Extraction',
-    prompt: 'Extract the top risk factors and legal disclosures mentioned in the report.',
-    agent: 'research',
+    title: 'Risk Severity Matrix',
+    prompt: 'Extract top legal risks, credit liabilities, and litigation items into a risk matrix.',
+    agent: 'risk',
   },
   {
     icon: TrendingUp,
     color: 'var(--google-purple)',
     bg: 'var(--google-purple-light)',
-    title: 'Business Highlights & Guidance',
-    prompt: 'What are the main business highlights and management forward guidance?',
-    agent: 'summary',
+    title: 'YoY Growth & Guidance Sentiment',
+    prompt: 'Analyze YoY revenue growth trajectory, operating margin behavior, and forward guidance.',
+    agent: 'trend',
   },
 ];
 
@@ -132,7 +132,7 @@ export default function ChatPanel() {
               IntelliReal Financial Copilot
             </div>
             <div style={{ fontSize: 11, color: 'var(--text-tertiary)' }}>
-              NVIDIA NIM • Llama 3.1 70B & 8B • Citation RAG
+              4 Active AI Agents • NVIDIA NIM • LangChain RAG
             </div>
           </div>
         </div>
@@ -185,7 +185,7 @@ export default function ChatPanel() {
               Financial Intelligence Assistant
             </h2>
             <p style={{ fontSize: 13, color: 'var(--text-secondary)', marginBottom: 24, maxWidth: 480, lineHeight: 1.5 }}>
-              Select a starter prompt below or type any question to analyze your uploaded SEC filings and financial reports.
+              Select an AI Agent or starter prompt below to analyze your SEC filings and financial reports.
             </p>
 
             {/* 2x2 Grid of Interactive Starter Prompt Cards */}
@@ -328,7 +328,7 @@ export default function ChatPanel() {
           <textarea
             ref={inputRef}
             className="chat-input"
-            placeholder={`Ask ${selectedAgent === 'summary' ? 'Summary Agent' : 'Research Agent'} about your documents...`}
+            placeholder={`Ask ${selectedAgent.toUpperCase()} Agent about your documents...`}
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}

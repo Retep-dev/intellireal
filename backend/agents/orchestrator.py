@@ -1,6 +1,6 @@
 """
 IntelliReal - Agent Orchestrator
-Routes queries to the appropriate agent using LangGraph state management.
+Routes queries to the appropriate agent (Research, Summary, Risk, Trend).
 """
 
 import logging
@@ -12,24 +12,29 @@ from models.schemas import AgentType, ChatRequest, ChatResponse, Citation
 from services.embeddings import EmbeddingService
 from agents.research_agent import ResearchAgent
 from agents.summary_agent import SummaryAgent
+from agents.risk_agent import RiskAgent
+from agents.trend_agent import TrendAgent
 
 logger = logging.getLogger(__name__)
 
 
 class AgentOrchestrator:
     """
-    Orchestrates agent execution based on query intent.
-    
-    Phase 1: Simple routing based on explicit agent_type selection.
-    Phase 2+: Will use LangGraph for multi-agent collaboration.
+    Orchestrates execution across all 4 IntelliReal Financial Agents:
+    1. Research Agent — Factual Q&A with precise source citations
+    2. Summary Agent — Structured financial summaries & KPI tables
+    3. Risk Agent — Risk factor detection & litigation monitoring
+    4. Market Trend Agent — YoY growth trajectories & guidance sentiment
     """
 
     def __init__(self, embedding_service: EmbeddingService):
         self.embedding_service = embedding_service
         self.research_agent = ResearchAgent(embedding_service)
         self.summary_agent = SummaryAgent(embedding_service)
+        self.risk_agent = RiskAgent(embedding_service)
+        self.trend_agent = TrendAgent(embedding_service)
 
-        logger.info("AgentOrchestrator initialized with Research + Summary agents")
+        logger.info("AgentOrchestrator initialized with 4 active agents: Research, Summary, Risk, Trend")
 
     async def process(
         self,
@@ -38,13 +43,6 @@ class AgentOrchestrator:
     ) -> ChatResponse:
         """
         Process a chat request by routing to the appropriate agent.
-        
-        Args:
-            request: ChatRequest with message, agent_type, and optional filters
-            user_id: Authenticated user ID
-            
-        Returns:
-            ChatResponse with answer, citations, and metadata
         """
         start_time = time.time()
         conversation_id = request.conversation_id or str(uuid.uuid4())
@@ -54,28 +52,19 @@ class AgentOrchestrator:
             f"user={user_id}, query='{request.message[:50]}...'"
         )
 
-        # Route to the appropriate agent
         agent_map = {
             AgentType.RESEARCH: self.research_agent,
             AgentType.SUMMARY: self.summary_agent,
-            # Phase 2 agents will be added here:
-            # AgentType.RISK: self.risk_agent,
-            # AgentType.TREND: self.trend_agent,
+            AgentType.RISK: self.risk_agent,
+            AgentType.TREND: self.trend_agent,
         }
 
         agent = agent_map.get(request.agent_type)
 
         if not agent:
-            return ChatResponse(
-                answer=f"Agent '{request.agent_type}' is not yet available. "
-                       f"Available agents: {', '.join(a.value for a in agent_map.keys())}",
-                citations=[],
-                agent_type=request.agent_type,
-                conversation_id=conversation_id,
-                processing_time=time.time() - start_time,
-            )
+            # Fallback to research agent if unknown type
+            agent = self.research_agent
 
-        # Execute agent
         try:
             result = await agent.run(
                 query=request.message,
@@ -85,21 +74,15 @@ class AgentOrchestrator:
         except Exception as e:
             logger.error(f"Agent execution error: {e}")
             return ChatResponse(
-                answer=f"An error occurred while processing your request: {str(e)}",
+                answer=f"An error occurred while processing your request with the {request.agent_type} agent: {str(e)}",
                 citations=[],
                 agent_type=request.agent_type,
                 conversation_id=conversation_id,
                 processing_time=time.time() - start_time,
             )
 
-        # Build citations from retrieved chunks
         citations = self._extract_citations(result.get("chunks", []))
-
         processing_time = time.time() - start_time
-        logger.info(
-            f"Request completed: {processing_time:.2f}s, "
-            f"{len(citations)} citations"
-        )
 
         return ChatResponse(
             answer=result.get("answer", ""),
@@ -147,12 +130,12 @@ class AgentOrchestrator:
                 "type": AgentType.RISK,
                 "name": "Risk Analysis Agent",
                 "description": "Identifies and analyzes risk factors, regulatory concerns, and litigation.",
-                "available": False,  # Phase 2
+                "available": True,
             },
             {
                 "type": AgentType.TREND,
                 "name": "Market Trend Agent",
-                "description": "Extracts market trends, sentiment analysis, and competitive positioning.",
-                "available": False,  # Phase 2
+                "description": "Extracts market trends, segment performance, and growth trajectories.",
+                "available": True,
             },
         ]
