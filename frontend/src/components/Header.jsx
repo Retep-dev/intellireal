@@ -1,7 +1,7 @@
 import { Search, ChevronDown, Grid, HelpCircle, MoreVertical } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 
-export default function Header({ title }) {
+export default function Header() {
   const { user } = useAuth();
   const initials = user?.user_metadata?.full_name
     ? user.user_metadata.full_name.split(' ').map(n => n[0]).join('').toUpperCase()
@@ -10,11 +10,11 @@ export default function Header({ title }) {
   return (
     <header className="header">
       {/* Account / Workspace Switcher (GA4 style) */}
-      <div className="header-left">
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
         <div className="account-selector">
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             <span className="account-subtitle">All accounts &gt; Demo Account</span>
-            <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+            <span className="account-title">
               GA4 - IntelliReal Financial ... <ChevronDown size={14} />
             </span>
           </div>

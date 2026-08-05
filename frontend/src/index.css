@@ -1,78 +1,59 @@
 /* ============================================
-   IntelliReal — Google Analytics 4 (GA4) Theme
-   Clean, light, Material Google Web UI
+   IntelliReal — Pristine GA4 Financial UI Theme
    ============================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Google+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Roboto:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
-/* ── GA4 Design System Tokens ── */
 :root {
-  /* Core palette */
+  /* Colors */
   --bg-app: #f8f9fa;
   --bg-surface: #ffffff;
   --bg-hover: #f1f3f4;
   --bg-active: #e8f0fe;
   --bg-secondary: #f1f3f4;
-  --bg-input: #f1f3f4;
 
-  /* Borders */
   --border-color: #dadce0;
   --border-light: #e8eaed;
-  --border-active: #1a73e8;
 
-  /* Text colors */
   --text-primary: #202124;
   --text-secondary: #5f6368;
   --text-tertiary: #70757a;
-  --text-blue: #1a73e8;
-  --text-disabled: #bdc1c6;
 
-  /* Google Brand Colors */
+  /* Google Palette */
   --google-blue: #1a73e8;
   --google-blue-hover: #174ea6;
   --google-blue-light: #e8f0fe;
+
   --google-green: #137333;
   --google-green-light: #e6f4ea;
+
   --google-red: #d93025;
   --google-red-light: #fce8e6;
-  --google-yellow: #f9ab00;
+
+  --google-yellow: #b06000;
   --google-yellow-light: #fef7e0;
+
   --google-purple: #9334e6;
   --google-purple-light: #f3e8fd;
 
-  /* Shadows */
-  --shadow-sm: 0 1px 2px 0 rgba(60,64,67,0.3), 0 1px 3px 1px rgba(60,64,67,0.15);
-  --shadow-md: 0 1px 3px 0 rgba(60,64,67,0.3), 0 4px 8px 3px rgba(60,64,67,0.15);
-  --shadow-card: 0 1px 2px 0 rgba(60,64,67,0.1), 0 2px 6px 2px rgba(60,64,67,0.05);
-
-  /* Layout dimensions */
+  /* Dimensions */
   --rail-width: 56px;
-  --subnav-width: 220px;
+  --subnav-width: 200px;
+  --sidebar-total-width: 256px;
   --header-height: 56px;
+
+  /* Typography & Radius */
+  --font-sans: 'Google Sans', 'Roboto', -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
   --radius-sm: 4px;
   --radius-md: 8px;
-  --radius-lg: 12px;
   --radius-pill: 20px;
-
-  /* Typography */
-  --font-sans: 'Google Sans', 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
-
-  /* Transitions */
-  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-normal: 200ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* ── Reset & Base ── */
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-}
-
-html {
-  font-size: 14px;
-  -webkit-font-smoothing: antialiased;
 }
 
 body {
@@ -80,49 +61,29 @@ body {
   background-color: var(--bg-app);
   color: var(--text-primary);
   line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
 }
 
-a {
-  color: var(--google-blue);
-  text-decoration: none;
-}
-
-/* ── Scrollbars ── */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  background: #dadce0;
-  border-radius: 3px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #bdc1c6;
-}
-
-/* ── App Layout ── */
+/* ── App Shell Layout ── */
 .app-layout {
   display: flex;
   min-height: 100vh;
-  background-color: var(--bg-app);
 }
 
-/* Dual Sidebar System */
+/* ── Sidebar System (Fixed Left) ── */
 .sidebar-container {
-  display: flex;
   position: fixed;
   top: 0;
   left: 0;
   bottom: 0;
+  width: var(--sidebar-total-width);
   z-index: 100;
+  display: flex;
   background: var(--bg-surface);
   border-right: 1px solid var(--border-color);
 }
 
-/* Left Icon Rail */
+/* Left Icon Rail (56px) */
 .icon-rail {
   width: var(--rail-width);
   background: var(--bg-surface);
@@ -132,21 +93,13 @@ a {
   align-items: center;
   padding: 12px 0;
   gap: 8px;
+
+  flex-shrink: 0;
 }
 
 .rail-logo {
   width: 36px;
   height: 36px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 12px;
-  cursor: pointer;
-}
-
-.rail-logo-icon {
-  width: 32px;
-  height: 32px;
   background: var(--google-blue);
   color: white;
   border-radius: 8px;
@@ -155,6 +108,7 @@ a {
   justify-content: center;
   font-weight: 700;
   font-size: 14px;
+  margin-bottom: 12px;
 }
 
 .rail-item {
@@ -166,9 +120,10 @@ a {
   justify-content: center;
   color: var(--text-secondary);
   cursor: pointer;
-  transition: all var(--transition-fast);
   border: none;
   background: transparent;
+  transition: all 150ms ease;
+  text-decoration: none;
 }
 
 .rail-item:hover {
@@ -186,12 +141,11 @@ a {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  align-items: center;
 }
 
-/* Sub-Navigation Panel */
+/* Sub-Navigation Panel (200px) */
 .subnav-panel {
-  width: var(--subnav-width);
+  flex: 1;
   background: var(--bg-app);
   padding: 16px 12px;
   display: flex;
@@ -201,7 +155,7 @@ a {
 }
 
 .subnav-title {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
   color: var(--google-blue);
   padding: 8px 12px;
@@ -218,7 +172,7 @@ a {
   color: var(--text-tertiary);
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  padding: 12px 12px 4px;
+  padding: 10px 12px 4px;
 }
 
 .subnav-item {
@@ -229,10 +183,9 @@ a {
   border-radius: var(--radius-pill);
   color: var(--text-primary);
   font-size: 13px;
-  font-weight: 400;
   cursor: pointer;
-  transition: background var(--transition-fast);
   text-decoration: none;
+  transition: background 150ms ease;
 }
 
 .subnav-item:hover {
@@ -254,16 +207,16 @@ a {
   color: var(--text-secondary);
 }
 
-/* ── Main Content Area ── */
+/* ── Main Area (Pushed past 256px sidebar) ── */
 .app-main {
   flex: 1;
-  margin-left: calc(var(--rail-width) + var(--subnav-width));
+  margin-left: var(--sidebar-total-width);
   display: flex;
   flex-direction: column;
   min-width: 0;
 }
 
-/* ── GA4 Top Header ── */
+/* ── GA4 Fixed Top Header ── */
 .header {
   height: var(--header-height);
   background: var(--bg-surface);
@@ -271,74 +224,69 @@ a {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 20px;
-  position: sticky;
+  padding: 0 24px;
+  position: fixed;
   top: 0;
+  right: 0;
+  left: var(--sidebar-total-width);
   z-index: 90;
-}
-
-.header-left {
-  display: flex;
-  align-items: center;
-  gap: 16px;
 }
 
 .account-selector {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 6px 12px;
+  gap: 6px;
+  padding: 4px 10px;
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
   background: var(--bg-surface);
   cursor: pointer;
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--text-primary);
-  transition: background var(--transition-fast);
-}
-
-.account-selector:hover {
-  background: var(--bg-hover);
 }
 
 .account-subtitle {
-  font-size: 11px;
+  font-size: 10px;
   color: var(--text-secondary);
-  font-weight: 400;
 }
 
-/* GA4 Center Search Bar */
+.account-title {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* GA4 Search Bar */
 .ga4-search {
   flex: 1;
-  max-width: 480px;
+  max-width: 440px;
   position: relative;
-  margin: 0 24px;
+  margin: 0 20px;
 }
 
 .ga4-search input {
   width: 100%;
-  height: 38px;
+  height: 36px;
   background: var(--bg-input);
   border: 1px solid transparent;
   border-radius: 8px;
-  padding: 0 16px 0 40px;
+  padding: 0 16px 0 36px;
   font-family: var(--font-sans);
   font-size: 13px;
   color: var(--text-primary);
   outline: none;
-  transition: all var(--transition-fast);
 }
 
 .ga4-search input:focus {
   background: var(--bg-surface);
   border-color: var(--google-blue);
-  box-shadow: 0 1px 3px rgba(60,64,67,0.2);
+  box-shadow: 0 1px 3px rgba(60,64,67,0.15);
 }
 
 .ga4-search-icon {
   position: absolute;
-  left: 12px;
+  left: 10px;
   top: 50%;
   transform: translateY(-50%);
   color: var(--text-secondary);
@@ -362,7 +310,6 @@ a {
   cursor: pointer;
   border: none;
   background: transparent;
-  transition: background var(--transition-fast);
 }
 
 .icon-btn:hover {
@@ -374,7 +321,7 @@ a {
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: #1a73e8;
+  background: var(--google-blue);
   color: white;
   display: flex;
   align-items: center;
@@ -384,12 +331,19 @@ a {
   cursor: pointer;
 }
 
-/* ── Secondary Sub-Header Bar (Reports Snapshot Toolbar) ── */
+/* ── Content View Wrapper ── */
+.app-content {
+  margin-top: var(--header-height);
+  padding: 20px 24px 40px;
+  flex: 1;
+}
+
+/* ── GA4 Toolbar / Subheader ── */
 .sub-header-bar {
-  padding: 16px 24px 8px;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  margin-bottom: 20px;
   flex-wrap: wrap;
   gap: 12px;
 }
@@ -422,7 +376,7 @@ a {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-top: 8px;
+  margin-top: 6px;
 }
 
 .pill {
@@ -437,11 +391,6 @@ a {
   font-weight: 500;
   color: var(--google-blue);
   cursor: pointer;
-  transition: background var(--transition-fast);
-}
-
-.pill:hover {
-  background: var(--google-blue-light);
 }
 
 .pill.active {
@@ -453,13 +402,13 @@ a {
 .toolbar-right {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 }
 
 .date-picker-btn {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   padding: 6px 12px;
   border: 1px solid var(--border-color);
   border-radius: 4px;
@@ -469,22 +418,12 @@ a {
   cursor: pointer;
 }
 
-.date-picker-btn:hover {
-  background: var(--bg-hover);
-}
-
-/* ── Content Body Container ── */
-.app-content {
-  padding: 16px 24px 32px;
-  flex: 1;
-}
-
-/* ── GA4 Dashboard Cards System ── */
+/* ── GA4 Grid & Card System ── */
 .ga4-grid {
   display: grid;
   grid-template-columns: 2fr 1fr;
   gap: 16px;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
 }
 
 .ga4-card {
@@ -497,7 +436,14 @@ a {
   flex-direction: column;
 }
 
-/* Metric Tabs Header across main card */
+.card-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: 12px;
+}
+
+/* Metric Tabs */
 .metric-tabs {
   display: flex;
   border-bottom: 1px solid var(--border-light);
@@ -507,14 +453,13 @@ a {
 }
 
 .metric-tab {
-  padding: 16px 16px;
+  padding: 14px 16px;
   display: flex;
   flex-direction: column;
   gap: 4px;
   cursor: pointer;
   border-bottom: 3px solid transparent;
-  transition: all var(--transition-fast);
-  min-width: 140px;
+  min-width: 130px;
 }
 
 .metric-tab:hover {
@@ -529,13 +474,10 @@ a {
   font-size: 12px;
   color: var(--text-secondary);
   font-weight: 500;
-  display: flex;
-  align-items: center;
-  gap: 4px;
 }
 
 .metric-tab-value {
-  font-size: 24px;
+  font-size: 22px;
   font-weight: 400;
   color: var(--text-primary);
 }
@@ -546,7 +488,7 @@ a {
   font-weight: 500;
 }
 
-/* Realtime Card styling */
+/* Real-Time Block */
 .realtime-header {
   font-size: 11px;
   font-weight: 500;
@@ -559,14 +501,6 @@ a {
   font-size: 32px;
   font-weight: 400;
   margin: 4px 0 12px;
-}
-
-.realtime-chart-label {
-  font-size: 10px;
-  font-weight: 500;
-  text-transform: uppercase;
-  color: var(--text-tertiary);
-  margin-bottom: 8px;
 }
 
 .top-list {
@@ -585,16 +519,6 @@ a {
   border-bottom: 1px dashed var(--border-light);
 }
 
-.top-list-country {
-  color: var(--text-primary);
-  font-weight: 400;
-}
-
-.top-list-count {
-  color: var(--text-secondary);
-  font-weight: 500;
-}
-
 .realtime-link {
   margin-top: auto;
   padding-top: 16px;
@@ -604,14 +528,15 @@ a {
   display: flex;
   align-items: center;
   gap: 4px;
+  cursor: pointer;
 }
 
-/* Insights Card */
+/* Insights */
 .insight-item {
   padding: 12px;
   border-radius: 8px;
   background: var(--bg-hover);
-  margin-top: 12px;
+  margin-top: 10px;
 }
 
 .insight-badge {
@@ -620,15 +545,13 @@ a {
   gap: 4px;
   font-size: 10px;
   font-weight: 600;
-  text-transform: uppercase;
   color: var(--google-purple);
-  margin-bottom: 6px;
+  margin-bottom: 4px;
 }
 
 .insight-text {
   font-size: 12px;
   color: var(--text-primary);
-  line-height: 1.4;
 }
 
 /* ── Buttons ── */
@@ -636,7 +559,7 @@ a {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 6px;
   padding: 8px 16px;
   border-radius: 4px;
   font-family: var(--font-sans);
@@ -644,7 +567,8 @@ a {
   font-weight: 500;
   cursor: pointer;
   border: 1px solid transparent;
-  transition: all var(--transition-fast);
+  transition: all 150ms ease;
+  text-decoration: none;
 }
 
 .btn-primary {
@@ -663,7 +587,6 @@ a {
 }
 .btn-secondary:hover {
   background: var(--google-blue-light);
-  border-color: var(--google-blue);
 }
 
 .btn-ghost {
@@ -675,17 +598,12 @@ a {
   color: var(--text-primary);
 }
 
-.btn-danger {
-  background: var(--google-red-light);
-  color: var(--google-red);
-}
-
 .btn-sm {
   padding: 4px 10px;
   font-size: 12px;
 }
 
-/* ── Document List ── */
+/* ── Document List & Cards ── */
 .doc-list {
   display: flex;
   flex-direction: column;
@@ -700,13 +618,12 @@ a {
   background: var(--bg-surface);
   border: 1px solid var(--border-color);
   border-radius: 6px;
-  transition: all var(--transition-fast);
+  transition: background 150ms ease;
   cursor: pointer;
 }
 
 .doc-item:hover {
   background: var(--bg-hover);
-  border-color: #bdc1c6;
 }
 
 .doc-icon {
@@ -718,23 +635,12 @@ a {
   justify-content: center;
   font-size: 14px;
   background: var(--google-blue-light);
+  color: var(--google-blue);
 }
 
-.doc-info {
-  flex: 1;
-}
-
-.doc-name {
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--text-primary);
-}
-
-.doc-meta {
-  font-size: 11px;
-  color: var(--text-tertiary);
-}
-
+.doc-info { flex: 1; }
+.doc-name { font-size: 13px; font-weight: 500; color: var(--text-primary); }
+.doc-meta { font-size: 11px; color: var(--text-tertiary); }
 .doc-status {
   padding: 2px 8px;
   border-radius: 10px;
@@ -746,7 +652,7 @@ a {
   color: var(--google-green);
 }
 
-/* ── Chat System (GA4 Light Style) ── */
+/* ── Chat System ── */
 .chat-container {
   display: flex;
   flex-direction: column;
@@ -763,7 +669,6 @@ a {
   justify-content: space-between;
   padding: 12px 20px;
   border-bottom: 1px solid var(--border-color);
-  background: var(--bg-surface);
 }
 
 .chat-messages {
@@ -855,37 +760,6 @@ a {
   border-color: var(--google-blue);
 }
 
-/* Citations */
-.citation-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-top: 8px;
-}
-
-.citation-card {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px 10px;
-  background: var(--bg-hover);
-  border: 1px solid var(--border-color);
-  border-radius: 4px;
-  font-size: 11px;
-  color: var(--text-secondary);
-  cursor: pointer;
-}
-
-.citation-score {
-  font-size: 10px;
-  padding: 1px 4px;
-  border-radius: 3px;
-  background: var(--google-green-light);
-  color: var(--google-green);
-  font-weight: 500;
-}
-
-/* Agent Selector Tabs */
 .agent-selector {
   display: flex;
   gap: 4px;
@@ -911,7 +785,7 @@ a {
   box-shadow: 0 1px 2px rgba(60,64,67,0.15);
 }
 
-/* ── Modals ── */
+/* Modals */
 .modal-overlay {
   position: fixed;
   inset: 0;
@@ -928,7 +802,7 @@ a {
   padding: 24px;
   width: 90%;
   max-width: 500px;
-  box-shadow: var(--shadow-md);
+  box-shadow: 0 4px 12px rgba(60,64,67,0.15);
 }
 
 .dropzone {
@@ -943,19 +817,8 @@ a {
   background: var(--google-blue-light);
 }
 
-/* Form Controls */
-.form-group {
-  margin-bottom: 14px;
-}
-
-.form-label {
-  display: block;
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--text-secondary);
-  margin-bottom: 4px;
-}
-
+.form-group { margin-bottom: 14px; }
+.form-label { display: block; font-size: 12px; font-weight: 500; color: var(--text-secondary); margin-bottom: 4px; }
 .form-input, .form-select {
   width: 100%;
   padding: 8px 12px;
@@ -967,11 +830,9 @@ a {
   color: var(--text-primary);
   outline: none;
 }
-.form-input:focus, .form-select:focus {
-  border-color: var(--google-blue);
-}
+.form-input:focus, .form-select:focus { border-color: var(--google-blue); }
 
-/* Auth Page */
+/* Auth */
 .auth-page {
   min-height: 100vh;
   display: flex;
@@ -987,33 +848,19 @@ a {
   border: 1px solid var(--border-color);
   border-radius: 8px;
   padding: 32px;
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 1px 3px rgba(60,64,67,0.1);
 }
 
-.auth-logo {
-  text-align: center;
-  margin-bottom: 24px;
-}
+.auth-logo { text-align: center; margin-bottom: 24px; }
 .auth-logo-icon {
-  width: 44px;
-  height: 44px;
-  background: var(--google-blue);
-  color: white;
-  border-radius: 8px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  font-size: 20px;
-  margin-bottom: 8px;
-}
-.auth-logo-text {
-  font-size: 20px;
-  font-weight: 500;
-  color: var(--text-primary);
+  width: 44px; height: 44px;
+  background: var(--google-blue); color: white;
+  border-radius: 8px; display: inline-flex;
+  align-items: center; justify-content: center;
+  font-weight: 700; font-size: 20px; margin-bottom: 8px;
 }
 
-/* Floating feedback button (like GA4 bottom right) */
+/* Floating feedback button */
 .ga4-floating-btn {
   position: fixed;
   bottom: 20px;
@@ -1023,20 +870,17 @@ a {
   border-radius: 50%;
   background: var(--bg-surface);
   border: 1px solid var(--border-color);
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 1px 3px rgba(60,64,67,0.2);
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--text-secondary);
   cursor: pointer;
   z-index: 80;
-  transition: all var(--transition-fast);
 }
-
 .ga4-floating-btn:hover {
   background: var(--bg-hover);
   color: var(--google-blue);
-  box-shadow: var(--shadow-md);
 }
 
 .spinner {
@@ -1047,6 +891,8 @@ a {
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
-@keyframes spin {
-  to { transform: rotate(360deg); }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+@media (max-width: 1024px) {
+  .ga4-grid { grid-template-columns: 1fr; }
 }

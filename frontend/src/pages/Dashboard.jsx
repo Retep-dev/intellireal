@@ -8,6 +8,10 @@ import {
   Sparkles,
   ArrowRight,
   MessageSquare,
+  FileText,
+  PieChart,
+  Shield,
+  TrendingUp,
 } from 'lucide-react';
 import {
   ResponsiveContainer,
@@ -57,12 +61,12 @@ const SPARKLINE_DATA = [
 
 // Horizontal Bar Data for acquisition sources
 const BAR_SOURCE_DATA = [
-  { name: '(none)', value: 85 },
-  { name: 'organic', value: 78 },
-  { name: 'cpc', value: 38 },
-  { name: 'referral', value: 18 },
-  { name: 'affiliate', value: 4 },
-  { name: 'email', value: 3 },
+  { name: 'SEC 10-K', value: 85 },
+  { name: '10-Q Q3', value: 78 },
+  { name: 'Earnings', value: 38 },
+  { name: 'Annual', value: 18 },
+  { name: 'XLSX KPI', value: 14 },
+  { name: 'HTML Filings', value: 8 },
 ];
 
 export default function Dashboard() {
@@ -84,7 +88,7 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="page-enter">
+    <div className="app-content">
       {/* GA4 Sub-Header / Reports Toolbar */}
       <div className="sub-header-bar">
         <div>
@@ -134,193 +138,224 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Main GA4 Grid Container */}
-      <div className="app-content">
-        <div className="ga4-grid">
-          {/* Main Card — Metric Tabs + Line Chart */}
-          <div className="ga4-card">
-            <div className="metric-tabs">
-              <div
-                className={`metric-tab ${activeTab === 'users' ? 'active' : ''}`}
-                onClick={() => setActiveTab('users')}
-              >
-                <div className="metric-tab-label">Total Users</div>
-                <div className="metric-tab-value">83K</div>
-                <div className="metric-tab-sub">↑ 12.4% vs last period</div>
-              </div>
-
-              <div
-                className={`metric-tab ${activeTab === 'new' ? 'active' : ''}`}
-                onClick={() => setActiveTab('new')}
-              >
-                <div className="metric-tab-label">New users</div>
-                <div className="metric-tab-value">70K</div>
-                <div className="metric-tab-sub">↑ 8.1% vs last period</div>
-              </div>
-
-              <div
-                className={`metric-tab ${activeTab === 'time' ? 'active' : ''}`}
-                onClick={() => setActiveTab('time')}
-              >
-                <div className="metric-tab-label">Average engagement time</div>
-                <div className="metric-tab-value">2m 00s</div>
-              </div>
-
-              <div
-                className={`metric-tab ${activeTab === 'revenue' ? 'active' : ''}`}
-                onClick={() => setActiveTab('revenue')}
-              >
-                <div className="metric-tab-label">Total revenue</div>
-                <div className="metric-tab-value">$253K</div>
-                <div className="metric-tab-sub">↑ 18.2% YoY</div>
-              </div>
+      {/* Main GA4 Top Grid Container */}
+      <div className="ga4-grid">
+        {/* Main Card — Metric Tabs + Line Chart */}
+        <div className="ga4-card">
+          <div className="metric-tabs">
+            <div
+              className={`metric-tab ${activeTab === 'users' ? 'active' : ''}`}
+              onClick={() => setActiveTab('users')}
+            >
+              <div className="metric-tab-label">Total Revenue</div>
+              <div className="metric-tab-value">$4.2B</div>
+              <div className="metric-tab-sub">↑ 12.4% vs FY2023</div>
             </div>
 
-            {/* Main Recharts Line Chart */}
-            <div style={{ width: '100%', height: 260, marginTop: 12 }}>
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={GA4_LINE_DATA}>
-                  <XAxis
-                    dataKey="date"
-                    axisLine={false}
-                    tickLine={false}
-                    tick={{ fill: '#70757a', fontSize: 11 }}
-                  />
-                  <YAxis
-                    axisLine={false}
-                    tickLine={false}
-                    tick={{ fill: '#70757a', fontSize: 11 }}
-                    domain={[0, 6000]}
-                    ticks={[0, 2000, 4000, 6000]}
-                  />
-                  <Tooltip
-                    contentStyle={{
-                      background: '#ffffff',
-                      border: '1px solid #dadce0',
-                      borderRadius: 6,
-                      fontSize: 12,
-                    }}
-                  />
-                  <Line
-                    type="monotone"
-                    dataKey="value"
-                    stroke="#1a73e8"
-                    strokeWidth={2}
-                    dot={false}
-                    activeDot={{ r: 5, fill: '#1a73e8' }}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
+            <div
+              className={`metric-tab ${activeTab === 'new' ? 'active' : ''}`}
+              onClick={() => setActiveTab('new')}
+            >
+              <div className="metric-tab-label">Net Income</div>
+              <div className="metric-tab-value">$890M</div>
+              <div className="metric-tab-sub">↑ 8.1% vs Q3</div>
+            </div>
+
+            <div
+              className={`metric-tab ${activeTab === 'time' ? 'active' : ''}`}
+              onClick={() => setActiveTab('time')}
+            >
+              <div className="metric-tab-label">EBITDA Margin</div>
+              <div className="metric-tab-value">28.5%</div>
+            </div>
+
+            <div
+              className={`metric-tab ${activeTab === 'revenue' ? 'active' : ''}`}
+              onClick={() => setActiveTab('revenue')}
+            >
+              <div className="metric-tab-label">Documents Analyzed</div>
+              <div className="metric-tab-value">{documents.length || 12}</div>
+              <div className="metric-tab-sub">↑ 100% processed</div>
             </div>
           </div>
 
-          {/* Right Card — USERS IN LAST 30 MINUTES */}
-          <div className="ga4-card">
-            <div className="realtime-header">USERS IN LAST 30 MINUTES</div>
-            <div className="realtime-value">85</div>
+          {/* Main Recharts Line Chart */}
+          <div style={{ width: '100%', height: 250, marginTop: 12 }}>
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={GA4_LINE_DATA}>
+                <XAxis
+                  dataKey="date"
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{ fill: '#70757a', fontSize: 11 }}
+                />
+                <YAxis
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{ fill: '#70757a', fontSize: 11 }}
+                  domain={[0, 6000]}
+                  ticks={[0, 2000, 4000, 6000]}
+                />
+                <Tooltip
+                  contentStyle={{
+                    background: '#ffffff',
+                    border: '1px solid #dadce0',
+                    borderRadius: 6,
+                    fontSize: 12,
+                  }}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="value"
+                  stroke="#1a73e8"
+                  strokeWidth={2}
+                  dot={false}
+                  activeDot={{ r: 5, fill: '#1a73e8' }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
 
-            <div className="realtime-chart-label">USERS PER MINUTE</div>
+        {/* Right Card — RECENT FINANCIAL DOCUMENTS & REAL-TIME */}
+        <div className="ga4-card">
+          <div className="realtime-header">ACTIVE QUERIES & REALTIME</div>
+          <div className="realtime-value">85</div>
 
-            {/* Sparkline Bar Chart */}
-            <div style={{ width: '100%', height: 60 }}>
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={SPARKLINE_DATA}>
-                  <Bar dataKey="count" fill="#1a73e8" radius={[2, 2, 0, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
+          <div className="realtime-header" style={{ fontSize: 10, marginBottom: 8 }}>
+            QUERIES PER MINUTE
+          </div>
+
+          {/* Sparkline Bar Chart */}
+          <div style={{ width: '100%', height: 50 }}>
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={SPARKLINE_DATA}>
+                <Bar dataKey="count" fill="#1a73e8" radius={[2, 2, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+
+          {/* Top Companies / Filings List */}
+          <div className="top-list">
+            <div className="top-list-item" style={{ fontWeight: 600, fontSize: 10, color: 'var(--text-tertiary)' }}>
+              <span>RECENT FILINGS & DOCS</span>
+              <span>CHUNKS</span>
+            </div>
+            {documents.length > 0 ? (
+              documents.slice(0, 4).map(doc => (
+                <div key={doc.id} className="top-list-item">
+                  <span className="top-list-country">{doc.filename}</span>
+                  <span className="top-list-count">{doc.num_chunks}</span>
+                </div>
+              ))
+            ) : (
+              <>
+                <div className="top-list-item">
+                  <span className="top-list-country">Apple_10K_FY2024.pdf</span>
+                  <span className="top-list-count">48</span>
+                </div>
+                <div className="top-list-item">
+                  <span className="top-list-country">Microsoft_10Q_Q3.pdf</span>
+                  <span className="top-list-count">36</span>
+                </div>
+                <div className="top-list-item">
+                  <span className="top-list-country">Tesla_Earnings_2024.docx</span>
+                  <span className="top-list-count">24</span>
+                </div>
+              </>
+            )}
+          </div>
+
+          <div className="realtime-link" onClick={() => navigate('/documents')}>
+            <span>View all documents</span>
+            <ArrowRight size={14} />
+          </div>
+        </div>
+      </div>
+
+      {/* Bottom GA4 Grid Row */}
+      <div className="ga4-grid">
+        {/* Active AI Agents System Card */}
+        <div className="ga4-card">
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontWeight: 500, fontSize: 14 }}>
+              <Sparkles size={16} color="var(--google-blue)" />
+              <span>Financial AI Agents</span>
+            </div>
+            <span className="check-badge">4 Agents Available</span>
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            <div className="doc-item" onClick={() => navigate('/chat')}>
+              <div className="doc-icon" style={{ background: 'var(--google-blue-light)', color: 'var(--google-blue)' }}>
+                <Sparkles size={16} />
+              </div>
+              <div className="doc-info">
+                <div className="doc-name">Research Agent</div>
+                <div className="doc-meta">Factual Q&A with precise source citations</div>
+              </div>
+              <span className="doc-status processed">Active</span>
             </div>
 
-            {/* Top Countries / Companies List */}
-            <div className="top-list">
-              <div className="top-list-item" style={{ fontWeight: 600, fontSize: 10, color: 'var(--text-tertiary)' }}>
-                <span>TOP COUNTRIES / REGIONS</span>
-                <span>USERS</span>
+            <div className="doc-item" onClick={() => navigate('/chat')}>
+              <div className="doc-icon" style={{ background: 'var(--google-green-light)', color: 'var(--google-green)' }}>
+                <PieChart size={16} />
               </div>
-              <div className="top-list-item">
-                <span className="top-list-country">India</span>
-                <span className="top-list-count">15</span>
+              <div className="doc-info">
+                <div className="doc-name">Summary Agent</div>
+                <div className="doc-meta">Structured financial summaries & KPI tables</div>
               </div>
-              <div className="top-list-item">
-                <span className="top-list-country">United States</span>
-                <span className="top-list-count">9</span>
-              </div>
-              <div className="top-list-item">
-                <span className="top-list-country">Tunisia</span>
-                <span className="top-list-count">8</span>
-              </div>
-              <div className="top-list-item">
-                <span className="top-list-country">China</span>
-                <span className="top-list-count">6</span>
-              </div>
-              <div className="top-list-item">
-                <span className="top-list-country">Netherlands</span>
-                <span className="top-list-count">6</span>
-              </div>
+              <span className="doc-status processed">Active</span>
             </div>
 
-            <div className="realtime-link" onClick={() => navigate('/documents')} style={{ cursor: 'pointer' }}>
-              <span>View documents</span>
-              <ArrowRight size={14} />
+            <div className="doc-item" style={{ opacity: 0.6 }}>
+              <div className="doc-icon" style={{ background: 'var(--google-yellow-light)', color: 'var(--google-yellow)' }}>
+                <Shield size={16} />
+              </div>
+              <div className="doc-info">
+                <div className="doc-name">Risk Analysis Agent</div>
+                <div className="doc-meta">Risk factor detection & litigation monitoring</div>
+              </div>
+              <span className="subnav-badge">Phase 2</span>
+            </div>
+
+            <div className="doc-item" style={{ opacity: 0.6 }}>
+              <div className="doc-icon" style={{ background: 'var(--google-purple-light)', color: 'var(--google-purple)' }}>
+                <TrendingUp size={16} />
+              </div>
+              <div className="doc-info">
+                <div className="doc-name">Market Trend Agent</div>
+                <div className="doc-meta">Trend extraction & guidance sentiment analysis</div>
+              </div>
+              <span className="subnav-badge">Phase 2</span>
             </div>
           </div>
         </div>
 
-        {/* Bottom GA4 Grid Row */}
-        <div className="ga4-grid">
-          {/* Insights Card */}
-          <div className="ga4-card">
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontWeight: 500, fontSize: 14 }}>
-              <Sparkles size={16} color="var(--google-purple)" />
-              <span>Insights</span>
-              <span className="subnav-badge" style={{ background: 'var(--google-purple-light)', color: 'var(--google-purple)' }}>
-                9
-              </span>
-            </div>
-
-            <div className="insight-item">
-              <div className="insight-badge">
-                <Sparkles size={10} /> AUTOMATED INSIGHT
-              </div>
-              <div className="insight-text">
-                Users for the Ad Network "Google search" spiked from October 31 to November 6, 2024.
-              </div>
-            </div>
-
-            <div className="insight-item">
-              <div className="insight-badge">
-                <Sparkles size={10} /> AUTOMATED INSIGHT
-              </div>
-              <div className="insight-text">
-                Users for the campaign from source "google" and medium "cpc" spiked.
-              </div>
-            </div>
+        {/* Financial Document Breakdown Card */}
+        <div className="ga4-card">
+          <div className="realtime-header" style={{ marginBottom: 4 }}>
+            DOCUMENT BREAKDOWN BY TYPE
+          </div>
+          <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginBottom: 12 }}>
+            Processed chunks across categories
           </div>
 
-          {/* Horizontal Bar Chart Card */}
-          <div className="ga4-card">
-            <div className="realtime-header" style={{ marginBottom: 12 }}>
-              WHERE DO YOUR NEW USERS COME FROM?
-            </div>
-            <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginBottom: 8 }}>
-              New users by First user medium
-            </div>
-
-            <div style={{ width: '100%', height: 180 }}>
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart layout="vertical" data={BAR_SOURCE_DATA}>
-                  <XAxis type="number" hide />
-                  <YAxis
-                    dataKey="name"
-                    type="category"
-                    axisLine={false}
-                    tickLine={false}
-                    tick={{ fill: '#5f6368', fontSize: 11 }}
-                    width={70}
-                  />
-                  <Bar dataKey="value" fill="#1a73e8" radius={[0, 4, 4, 0]} barSize={16} />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
+          <div style={{ width: '100%', height: 210 }}>
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart layout="vertical" data={BAR_SOURCE_DATA}>
+                <XAxis type="number" hide />
+                <YAxis
+                  dataKey="name"
+                  type="category"
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{ fill: '#5f6368', fontSize: 11 }}
+                  width={80}
+                />
+                <Bar dataKey="value" fill="#1a73e8" radius={[0, 4, 4, 0]} barSize={16} />
+              </BarChart>
+            </ResponsiveContainer>
           </div>
         </div>
       </div>
