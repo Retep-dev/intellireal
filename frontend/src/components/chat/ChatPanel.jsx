@@ -6,49 +6,77 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
 const AGENTS = [
-  { type: 'research', label: '🔍 Research Agent', available: true },
-  { type: 'summary', label: '📋 Summary Agent', available: true },
-  { type: 'risk', label: '⚠️ Risk Analysis', available: true },
-  { type: 'trend', label: '📈 Market Trends', available: true },
+  { type: 'research', label: '🔍 Research Agent' },
+  { type: 'summary', label: '📋 Summary Agent' },
+  { type: 'risk', label: '⚠️ Risk Analysis' },
+  { type: 'trend', label: '📈 Market Trends' },
 ];
 
-const SUGGESTED_PROMPTS = [
-  {
-    icon: PieChart,
+const AGENT_CONFIGS = {
+  research: {
+    name: 'Research Q&A Agent',
+    icon: Search,
     color: 'var(--google-blue)',
     bg: 'var(--google-blue-light)',
-    title: 'Executive Financial Summary',
-    prompt: 'Summarize the financial statements with key KPI tables and metrics.',
-    agent: 'summary',
+    gradient: 'linear-gradient(135deg, #1a73e8, #174ea6)',
+    subtitle: 'Factual Q&A with precise source citations & exact metrics from your financial documents.',
+    placeholder: 'Ask Research Agent a factual question (e.g. What was net revenue in Q3?)...',
+    prompts: [
+      { title: 'Factual Revenue & Profit Q&A', prompt: 'What is the total revenue, net income, and gross profit margin?', icon: Search, color: 'var(--google-blue)', bg: 'var(--google-blue-light)' },
+      { title: 'Operating Expenses Breakdown', prompt: 'Break down operating expenses, R&D spending, and SG&A costs.', icon: Search, color: 'var(--google-blue)', bg: 'var(--google-blue-light)' },
+      { title: 'Balance Sheet & Cash Reserves', prompt: 'What is total cash, liquid assets, and long-term debt liabilities?', icon: Search, color: 'var(--google-blue)', bg: 'var(--google-blue-light)' },
+      { title: 'Audit & Accounting Disclosures', prompt: 'Who are the official independent auditors and key accounting disclosures?', icon: Search, color: 'var(--google-blue)', bg: 'var(--google-blue-light)' },
+    ],
   },
-  {
-    icon: Search,
+  summary: {
+    name: 'Financial Summary Agent',
+    icon: PieChart,
     color: 'var(--google-green)',
     bg: 'var(--google-green-light)',
-    title: 'Factual Revenue & Profit Q&A',
-    prompt: 'What is the total revenue, net income, and gross profit margin?',
-    agent: 'research',
+    gradient: 'linear-gradient(135deg, #137333, #0d5224)',
+    subtitle: 'Produces structured executive summaries, KPI tables, and core business highlights.',
+    placeholder: 'Ask Summary Agent for executive summaries or report overviews...',
+    prompts: [
+      { title: 'Executive Financial Summary', prompt: 'Summarize the financial statements with key KPI tables and metrics.', icon: PieChart, color: 'var(--google-green)', bg: 'var(--google-green-light)' },
+      { title: 'Full Document Highlights', prompt: 'Generate a comprehensive summary of business highlights and notable items.', icon: PieChart, color: 'var(--google-green)', bg: 'var(--google-green-light)' },
+      { title: 'Executive Overview & Guidance', prompt: 'Provide an executive summary including forward guidance and management projections.', icon: PieChart, color: 'var(--google-green)', bg: 'var(--google-green-light)' },
+      { title: 'Segment Revenue Summary', prompt: 'Summarize financial performance across all business segments.', icon: PieChart, color: 'var(--google-green)', bg: 'var(--google-green-light)' },
+    ],
   },
-  {
+  risk: {
+    name: 'Risk Analysis Agent',
     icon: Shield,
     color: 'var(--google-yellow)',
     bg: 'var(--google-yellow-light)',
-    title: 'Risk Severity Matrix',
-    prompt: 'Extract top legal risks, credit liabilities, and litigation items into a risk matrix.',
-    agent: 'risk',
+    gradient: 'linear-gradient(135deg, #b06000, #e65100)',
+    subtitle: 'Extracts legal litigation, credit liabilities, regulatory disclosures, and risk severity matrices.',
+    placeholder: 'Ask Risk Agent about litigation, credit risks, and regulatory threats...',
+    prompts: [
+      { title: 'Risk Severity Matrix', prompt: 'Extract top legal risks, credit liabilities, and litigation items into a risk severity matrix.', icon: Shield, color: 'var(--google-yellow)', bg: 'var(--google-yellow-light)' },
+      { title: 'Regulatory & Legal Litigation', prompt: 'Summarize active court litigation, antitrust inquiries, and regulatory compliance threats.', icon: Shield, color: 'var(--google-yellow)', bg: 'var(--google-yellow-light)' },
+      { title: 'Credit, Debt & Liquidity Risk', prompt: 'Analyze credit agreement covenants, debt maturity schedule, and interest rate exposure.', icon: Shield, color: 'var(--google-yellow)', bg: 'var(--google-yellow-light)' },
+      { title: 'Supply Chain & Macro Threats', prompt: 'Identify vendor dependencies, concentration risks, and foreign exchange risks.', icon: Shield, color: 'var(--google-yellow)', bg: 'var(--google-yellow-light)' },
+    ],
   },
-  {
+  trend: {
+    name: 'Market Trend Agent',
     icon: TrendingUp,
     color: 'var(--google-purple)',
     bg: 'var(--google-purple-light)',
-    title: 'YoY Growth & Guidance Sentiment',
-    prompt: 'Analyze YoY revenue growth trajectory, operating margin behavior, and forward guidance.',
-    agent: 'trend',
+    gradient: 'linear-gradient(135deg, #9334e6, #6b21a8)',
+    subtitle: 'Analyzes YoY revenue momentum, segment growth trajectories, margin behavior, and guidance sentiment.',
+    placeholder: 'Ask Market Trend Agent about YoY growth, margin trends, and guidance outlook...',
+    prompts: [
+      { title: 'YoY Growth Trajectory Table', prompt: 'Analyze YoY revenue growth trajectory, operating margin behavior, and forward guidance.', icon: TrendingUp, color: 'var(--google-purple)', bg: 'var(--google-purple-light)' },
+      { title: 'Segment Growth Performance', prompt: 'Extract YoY performance trajectories and growth drivers across all business segments.', icon: TrendingUp, color: 'var(--google-purple)', bg: 'var(--google-purple-light)' },
+      { title: 'Management Guidance Sentiment', prompt: 'Evaluate management outlook sentiment, capex plans, and forward guidance.', icon: TrendingUp, color: 'var(--google-purple)', bg: 'var(--google-purple-light)' },
+      { title: 'Margin Expansion & Trajectory', prompt: 'Analyze gross margin and operating margin expansion or compression trends.', icon: TrendingUp, color: 'var(--google-purple)', bg: 'var(--google-purple-light)' },
+    ],
   },
-];
+};
 
 export default function ChatPanel() {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const agentFromUrl = searchParams.get('agent');
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
@@ -58,7 +86,7 @@ export default function ChatPanel() {
   const inputRef = useRef(null);
 
   useEffect(() => {
-    if (agentFromUrl && ['research', 'summary', 'risk', 'trend'].includes(agentFromUrl)) {
+    if (agentFromUrl && AGENT_CONFIGS[agentFromUrl]) {
       setSelectedAgent(agentFromUrl);
     }
   }, [agentFromUrl]);
@@ -66,6 +94,14 @@ export default function ChatPanel() {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
+
+  const currentConfig = AGENT_CONFIGS[selectedAgent] || AGENT_CONFIGS.summary;
+  const CurrentIcon = currentConfig.icon;
+
+  const handleSelectAgent = (agentType) => {
+    setSelectedAgent(agentType);
+    setSearchParams({ agent: agentType });
+  };
 
   const sendMessage = async (overridePrompt, overrideAgent) => {
     const text = (overridePrompt || input).trim();
@@ -127,21 +163,21 @@ export default function ChatPanel() {
             width: 32,
             height: 32,
             borderRadius: 8,
-            background: 'linear-gradient(135deg, #1a73e8, #9334e6)',
+            background: currentConfig.gradient,
             color: 'white',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            boxShadow: '0 2px 4px rgba(26,115,232,0.2)',
+            boxShadow: '0 2px 4px rgba(0,0,0,0.15)',
           }}>
-            <Sparkles size={18} />
+            <CurrentIcon size={18} />
           </div>
           <div>
             <div style={{ fontWeight: 600, fontSize: 14, color: 'var(--text-primary)' }}>
-              IntelliReal Financial Copilot
+              IntelliReal • {currentConfig.name}
             </div>
             <div style={{ fontSize: 11, color: 'var(--text-tertiary)' }}>
-              4 Active AI Agents • NVIDIA NIM • LangChain RAG
+              NVIDIA NIM • Citation RAG
             </div>
           </div>
         </div>
@@ -151,11 +187,8 @@ export default function ChatPanel() {
           {AGENTS.map(agent => (
             <button
               key={agent.type}
-              className={`agent-option ${selectedAgent === agent.type ? 'active' : ''} ${!agent.available ? 'disabled' : ''}`}
-              onClick={() => {
-                if (agent.available) setSelectedAgent(agent.type);
-              }}
-              disabled={!agent.available}
+              className={`agent-option ${selectedAgent === agent.type ? 'active' : ''}`}
+              onClick={() => handleSelectAgent(agent.type)}
             >
               {agent.label}
             </button>
@@ -174,30 +207,30 @@ export default function ChatPanel() {
             flexDirection: 'column',
             alignItems: 'center',
           }}>
-            {/* Hero Badge */}
+            {/* Hero Badge for Selected Agent */}
             <div style={{
               width: 56,
               height: 56,
               borderRadius: 16,
-              background: 'linear-gradient(135deg, #1a73e8, #9334e6)',
+              background: currentConfig.gradient,
               color: 'white',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               marginBottom: 16,
-              boxShadow: '0 4px 12px rgba(26,115,232,0.25)',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
             }}>
-              <Sparkles size={28} />
+              <CurrentIcon size={28} />
             </div>
 
             <h2 style={{ fontSize: 20, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 6 }}>
-              Financial Intelligence Assistant
+              {currentConfig.name}
             </h2>
-            <p style={{ fontSize: 13, color: 'var(--text-secondary)', marginBottom: 24, maxWidth: 480, lineHeight: 1.5 }}>
-              Select an AI Agent or starter prompt below to analyze your SEC filings and financial reports.
+            <p style={{ fontSize: 13, color: 'var(--text-secondary)', marginBottom: 24, maxWidth: 500, lineHeight: 1.5 }}>
+              {currentConfig.subtitle}
             </p>
 
-            {/* 2x2 Grid of Interactive Starter Prompt Cards */}
+            {/* 2x2 Grid of Interactive Starter Prompt Cards for Active Agent */}
             <div style={{
               display: 'grid',
               gridTemplateColumns: '1fr 1fr',
@@ -205,15 +238,12 @@ export default function ChatPanel() {
               width: '100%',
               textAlign: 'left',
             }}>
-              {SUGGESTED_PROMPTS.map((sp, idx) => {
-                const IconComp = sp.icon;
+              {currentConfig.prompts.map((sp, idx) => {
+                const PromptIcon = sp.icon;
                 return (
                   <div
                     key={idx}
-                    onClick={() => {
-                      setSelectedAgent(sp.agent);
-                      sendMessage(sp.prompt, sp.agent);
-                    }}
+                    onClick={() => sendMessage(sp.prompt, selectedAgent)}
                     style={{
                       background: 'var(--bg-surface)',
                       border: '1px solid var(--border-color)',
@@ -226,8 +256,8 @@ export default function ChatPanel() {
                       gap: 6,
                     }}
                     onMouseEnter={(e) => {
-                      e.currentTarget.style.borderColor = 'var(--google-blue)';
-                      e.currentTarget.style.background = 'var(--google-blue-light)';
+                      e.currentTarget.style.borderColor = currentConfig.color;
+                      e.currentTarget.style.background = currentConfig.bg;
                     }}
                     onMouseLeave={(e) => {
                       e.currentTarget.style.borderColor = 'var(--border-color)';
@@ -245,7 +275,7 @@ export default function ChatPanel() {
                         alignItems: 'center',
                         justifyContent: 'center',
                       }}>
-                        <IconComp size={14} />
+                        <PromptIcon size={14} />
                       </div>
                       <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)' }}>
                         {sp.title}
@@ -337,7 +367,7 @@ export default function ChatPanel() {
           <textarea
             ref={inputRef}
             className="chat-input"
-            placeholder={`Ask ${selectedAgent.toUpperCase()} Agent about your documents...`}
+            placeholder={currentConfig.placeholder}
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
