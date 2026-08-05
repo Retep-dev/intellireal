@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import {
   BarChart2,
@@ -21,6 +20,10 @@ export default function Sidebar({ isPinned, setIsPinned }) {
   const location = useLocation();
 
   const isCurrent = (path) => location.pathname === path;
+  const isAgentActive = (agentType) => {
+    const params = new URLSearchParams(location.search);
+    return location.pathname === '/chat' && params.get('agent') === agentType;
+  };
 
   return (
     <aside className={`sidebar-container ${isPinned ? 'pinned' : ''}`}>
@@ -49,22 +52,34 @@ export default function Sidebar({ isPinned, setIsPinned }) {
         <NavLink
           to="/chat"
           className={`rail-item ${isCurrent('/chat') ? 'active' : ''}`}
-          title="Financial Chat"
+          title="Financial Chat Copilot"
         >
           <MessageSquare size={20} />
         </NavLink>
 
-        <div className="rail-item" title="SEC EDGAR (Phase 2)" style={{ opacity: 0.5 }}>
-          <Search size={20} />
-        </div>
-
-        <div className="rail-item" title="Analytics (Phase 2)" style={{ opacity: 0.5 }}>
-          <TrendingUp size={20} />
-        </div>
-
-        <div className="rail-item" title="Risk Monitor (Phase 2)" style={{ opacity: 0.5 }}>
+        <NavLink
+          to="/chat?agent=risk"
+          className={`rail-item ${isAgentActive('risk') ? 'active' : ''}`}
+          title="Risk Analysis Agent"
+        >
           <Shield size={20} />
-        </div>
+        </NavLink>
+
+        <NavLink
+          to="/chat?agent=trend"
+          className={`rail-item ${isAgentActive('trend') ? 'active' : ''}`}
+          title="Market Trend Agent"
+        >
+          <TrendingUp size={20} />
+        </NavLink>
+
+        <NavLink
+          to="/chat?agent=research"
+          className={`rail-item ${isAgentActive('research') ? 'active' : ''}`}
+          title="Research Q&A Agent"
+        >
+          <Search size={20} />
+        </NavLink>
 
         {/* Bottom Rail items */}
         <div className="rail-bottom">
@@ -119,40 +134,50 @@ export default function Sidebar({ isPinned, setIsPinned }) {
 
           <NavLink
             to="/chat"
-            className={`subnav-item ${isCurrent('/chat') ? 'active' : ''}`}
+            className={`subnav-item ${isCurrent('/chat') && !location.search ? 'active' : ''}`}
           >
-            <span>Financial Chat</span>
+            <span>Financial Copilot</span>
           </NavLink>
         </div>
 
         <div>
-          <div className="subnav-group-label">Financial Agents</div>
+          <div className="subnav-group-label">Financial AI Agents</div>
 
-          <div className="subnav-item active" style={{ background: 'transparent' }}>
+          <NavLink
+            to="/chat?agent=research"
+            className={`subnav-item ${isAgentActive('research') ? 'active' : ''}`}
+          >
             <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
               <Sparkles size={14} color="var(--google-blue)" /> Research Agent
             </span>
-          </div>
+          </NavLink>
 
-          <div className="subnav-item" style={{ opacity: 0.8 }}>
+          <NavLink
+            to="/chat?agent=summary"
+            className={`subnav-item ${isAgentActive('summary') ? 'active' : ''}`}
+          >
             <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
               <PieChart size={14} color="var(--google-green)" /> Summary Agent
             </span>
-          </div>
+          </NavLink>
 
-          <div className="subnav-item" style={{ opacity: 0.5 }}>
+          <NavLink
+            to="/chat?agent=risk"
+            className={`subnav-item ${isAgentActive('risk') ? 'active' : ''}`}
+          >
             <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-              <Shield size={14} /> Risk Analysis
+              <Shield size={14} color="var(--google-yellow)" /> Risk Analysis
             </span>
-            <span className="subnav-badge">Phase 2</span>
-          </div>
+          </NavLink>
 
-          <div className="subnav-item" style={{ opacity: 0.5 }}>
+          <NavLink
+            to="/chat?agent=trend"
+            className={`subnav-item ${isAgentActive('trend') ? 'active' : ''}`}
+          >
             <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-              <TrendingUp size={14} /> Market Trends
+              <TrendingUp size={14} color="var(--google-purple)" /> Market Trends
             </span>
-            <span className="subnav-badge">Phase 2</span>
-          </div>
+          </NavLink>
         </div>
 
         <div>

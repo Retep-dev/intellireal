@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Send, Bot, User, Sparkles, FileText, PieChart, Search, Shield, TrendingUp } from 'lucide-react';
 import { apiRequest } from '../../lib/supabase';
 import ReactMarkdown from 'react-markdown';
@@ -47,12 +48,20 @@ const SUGGESTED_PROMPTS = [
 ];
 
 export default function ChatPanel() {
+  const [searchParams] = useSearchParams();
+  const agentFromUrl = searchParams.get('agent');
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
-  const [selectedAgent, setSelectedAgent] = useState('summary');
+  const [selectedAgent, setSelectedAgent] = useState(agentFromUrl || 'summary');
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
+
+  useEffect(() => {
+    if (agentFromUrl && ['research', 'summary', 'risk', 'trend'].includes(agentFromUrl)) {
+      setSelectedAgent(agentFromUrl);
+    }
+  }, [agentFromUrl]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
