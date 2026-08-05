@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Send, Bot, User, Sparkles, FileText } from 'lucide-react';
+import { Send, Bot, User, Sparkles, FileText, PieChart, Search, Shield, TrendingUp } from 'lucide-react';
 import { apiRequest } from '../../lib/supabase';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -9,6 +9,41 @@ const AGENTS = [
   { type: 'summary', label: '📋 Summary Agent', available: true },
   { type: 'risk', label: '⚠️ Risk Analysis', available: false },
   { type: 'trend', label: '📈 Market Trends', available: false },
+];
+
+const SUGGESTED_PROMPTS = [
+  {
+    icon: PieChart,
+    color: 'var(--google-blue)',
+    bg: 'var(--google-blue-light)',
+    title: 'Executive Financial Summary',
+    prompt: 'Summarize the financial statements with key KPI tables and metrics.',
+    agent: 'summary',
+  },
+  {
+    icon: Search,
+    color: 'var(--google-green)',
+    bg: 'var(--google-green-light)',
+    title: 'Factual Revenue & Profit Q&A',
+    prompt: 'What is the total revenue, net income, and gross profit margin?',
+    agent: 'research',
+  },
+  {
+    icon: Shield,
+    color: 'var(--google-yellow)',
+    bg: 'var(--google-yellow-light)',
+    title: 'Risk Factor Extraction',
+    prompt: 'Extract the top risk factors and legal disclosures mentioned in the report.',
+    agent: 'research',
+  },
+  {
+    icon: TrendingUp,
+    color: 'var(--google-purple)',
+    bg: 'var(--google-purple-light)',
+    title: 'Business Highlights & Guidance',
+    prompt: 'What are the main business highlights and management forward guidance?',
+    agent: 'summary',
+  },
 ];
 
 export default function ChatPanel() {
@@ -23,8 +58,9 @@ export default function ChatPanel() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  const sendMessage = async () => {
-    const text = input.trim();
+  const sendMessage = async (overridePrompt, overrideAgent) => {
+    const text = (overridePrompt || input).trim();
+    const agentToUse = overrideAgent || selectedAgent;
     if (!text || loading) return;
 
     const userMsg = { role: 'user', content: text, timestamp: new Date() };
@@ -37,7 +73,7 @@ export default function ChatPanel() {
         method: 'POST',
         body: JSON.stringify({
           message: text,
-          agent_type: selectedAgent,
+          agent_type: agentToUse,
         }),
       });
 
@@ -56,7 +92,7 @@ export default function ChatPanel() {
         role: 'assistant',
         content: `Sorry, I encountered an error: ${error.message}. Please make sure the backend is running and you have documents uploaded.`,
         citations: [],
-        agent: selectedAgent,
+        agent: agentToUse,
         timestamp: new Date(),
       };
       setMessages(prev => [...prev, errorMsg]);
@@ -75,34 +111,41 @@ export default function ChatPanel() {
 
   return (
     <div className="chat-container">
-      {/* Chat Header */}
+      {/* Chat Header Bar */}
       <div className="chat-header">
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <div style={{
-            width: 28,
-            height: 28,
-            borderRadius: 6,
-            background: 'var(--google-blue-light)',
-            color: 'var(--google-blue)',
+            width: 32,
+            height: 32,
+            borderRadius: 8,
+            background: 'linear-gradient(135deg, #1a73e8, #9334e6)',
+            color: 'white',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
+            boxShadow: '0 2px 4px rgba(26,115,232,0.2)',
           }}>
-            <Sparkles size={16} />
+            <Sparkles size={18} />
           </div>
           <div>
-            <div style={{ fontWeight: 600, fontSize: 14 }}>IntelliReal Financial AI</div>
-            <div style={{ fontSize: 11, color: 'var(--text-tertiary)' }}>Powered by NVIDIA NIM & LangGraph</div>
+            <div style={{ fontWeight: 600, fontSize: 14, color: 'var(--text-primary)' }}>
+              IntelliReal Financial Copilot
+            </div>
+            <div style={{ fontSize: 11, color: 'var(--text-tertiary)' }}>
+              NVIDIA NIM • Llama 3.1 70B & 8B • Citation RAG
+            </div>
           </div>
         </div>
 
-        {/* Agent Selector Tabs */}
+        {/* Agent Selector Segment Pills */}
         <div className="agent-selector">
           {AGENTS.map(agent => (
             <button
               key={agent.type}
               className={`agent-option ${selectedAgent === agent.type ? 'active' : ''} ${!agent.available ? 'disabled' : ''}`}
-              onClick={() => agent.available && setSelectedAgent(agent.type)}
+              onClick={() => {
+                if (agent.available) setSelectedAgent(agent.type);
+              }}
               disabled={!agent.available}
             >
               {agent.label}
@@ -111,45 +154,100 @@ export default function ChatPanel() {
         </div>
       </div>
 
-      {/* Messages */}
+      {/* Messages Scroll Area */}
       <div className="chat-messages">
         {messages.length === 0 && (
-          <div className="empty-state" style={{ padding: '40px 20px' }}>
+          <div style={{
+            maxWidth: 680,
+            margin: '20px auto 0',
+            textAlign: 'center',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+          }}>
+            {/* Hero Badge */}
             <div style={{
               width: 56,
               height: 56,
-              borderRadius: '50%',
-              background: 'var(--google-blue-light)',
-              color: 'var(--google-blue)',
+              borderRadius: 16,
+              background: 'linear-gradient(135deg, #1a73e8, #9334e6)',
+              color: 'white',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              margin: '0 auto 16px',
+              marginBottom: 16,
+              boxShadow: '0 4px 12px rgba(26,115,232,0.25)',
             }}>
               <Sparkles size={28} />
             </div>
-            <h3 className="empty-state-title">Financial Intelligence Assistant</h3>
-            <p className="empty-state-text">
-              Ask questions or request structured summaries for your SEC filings and financial reports.
+
+            <h2 style={{ fontSize: 20, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 6 }}>
+              Financial Intelligence Assistant
+            </h2>
+            <p style={{ fontSize: 13, color: 'var(--text-secondary)', marginBottom: 24, maxWidth: 480, lineHeight: 1.5 }}>
+              Select a starter prompt below or type any question to analyze your uploaded SEC filings and financial reports.
             </p>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, justifyContent: 'center', marginTop: 16, maxWidth: 540 }}>
-              {[
-                'Summarize the financial statements',
-                'What is total revenue and net income?',
-                'Extract key business highlights & risks',
-              ].map((suggestion, i) => (
-                <button
-                  key={i}
-                  className="btn btn-secondary btn-sm"
-                  onClick={() => {
-                    setInput(suggestion);
-                    inputRef.current?.focus();
-                  }}
-                  style={{ fontSize: 12, borderRadius: 16 }}
-                >
-                  {suggestion}
-                </button>
-              ))}
+
+            {/* 2x2 Grid of Interactive Starter Prompt Cards */}
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: '1fr 1fr',
+              gap: 12,
+              width: '100%',
+              textAlign: 'left',
+            }}>
+              {SUGGESTED_PROMPTS.map((sp, idx) => {
+                const IconComp = sp.icon;
+                return (
+                  <div
+                    key={idx}
+                    onClick={() => {
+                      setSelectedAgent(sp.agent);
+                      sendMessage(sp.prompt, sp.agent);
+                    }}
+                    style={{
+                      background: 'var(--bg-surface)',
+                      border: '1px solid var(--border-color)',
+                      borderRadius: 10,
+                      padding: 14,
+                      cursor: 'pointer',
+                      transition: 'all 150ms ease',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: 6,
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.borderColor = 'var(--google-blue)';
+                      e.currentTarget.style.background = 'var(--google-blue-light)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.borderColor = 'var(--border-color)';
+                      e.currentTarget.style.background = 'var(--bg-surface)';
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <div style={{
+                        width: 26,
+                        height: 26,
+                        borderRadius: 6,
+                        background: sp.bg,
+                        color: sp.color,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}>
+                        <IconComp size={14} />
+                      </div>
+                      <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)' }}>
+                        {sp.title}
+                      </span>
+                    </div>
+                    <span style={{ fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.4 }}>
+                      {sp.prompt}
+                    </span>
+                  </div>
+                );
+              })}
             </div>
           </div>
         )}
@@ -198,7 +296,7 @@ export default function ChatPanel() {
                   marginTop: 6,
                   fontFamily: 'var(--font-mono)',
                 }}>
-                  Response generated in {msg.processingTime.toFixed(2)}s via {msg.agent} agent
+                  Generated in {msg.processingTime.toFixed(2)}s via {msg.agent} agent
                 </div>
               )}
             </div>
@@ -230,7 +328,7 @@ export default function ChatPanel() {
           <textarea
             ref={inputRef}
             className="chat-input"
-            placeholder={`Ask ${selectedAgent === 'summary' ? 'Summary Agent' : 'Research Agent'} about your documents... (Press Enter to send)`}
+            placeholder={`Ask ${selectedAgent === 'summary' ? 'Summary Agent' : 'Research Agent'} about your documents...`}
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
@@ -239,7 +337,7 @@ export default function ChatPanel() {
           />
           <button
             className="btn btn-primary"
-            onClick={sendMessage}
+            onClick={() => sendMessage()}
             disabled={loading || !input.trim()}
             style={{ height: 38, width: 38, padding: 0, borderRadius: 8 }}
           >
