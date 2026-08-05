@@ -1,6 +1,7 @@
 """
 IntelliReal - Financial Summary Agent
 Generates structured financial summaries of uploaded documents.
+Includes automatic fallback model handling for NVIDIA NIM API timeouts.
 """
 
 import logging
@@ -77,15 +78,13 @@ class SummaryAgent:
     ) -> dict:
         """
         Generate a financial summary for the specified documents.
-        
-        If no specific query, generates a comprehensive summary.
-        If query specifies focus areas, tailors the summary accordingly.
         """
-        # For summaries, we want broader context — retrieve more chunks
+        settings = get_settings()
+
         chunks = await self.embedding_service.search(
             query=query or "financial summary key metrics revenue profit loss risk",
             user_id=user_id,
-            top_k=12,  # Summary agent needs more context
+            top_k=8,  # Summary agent context
             document_ids=document_ids,
         )
 
@@ -97,8 +96,6 @@ class SummaryAgent:
             }
 
         context = self._format_context(chunks)
-
-        # Determine user intent
         user_msg = query if query else "Generate a comprehensive financial summary of the uploaded documents."
 
         messages = [
@@ -110,8 +107,22 @@ class SummaryAgent:
             response = self.llm.invoke(messages)
             answer = response.content
         except Exception as e:
-            logger.error(f"Summary Agent error: {e}")
-            answer = f"Summary Agent encountered an error: {str(e)}"
+            logger.warning(f"Primary model ({settings.nvidia_model}) error/timeout: {e}. Retrying with fast model...")
+            try:
+                fallback_llm = ChatNVIDIA(
+                    model="meta/llama-3.1-8b-instruct",
+                    api_key=settings.nvidia_api_key,
+                    temperature=0.1,
+                    max_tokens=2048,
+                )
+                response = fallback_llm.invoke(messages)
+                answer = response.content
+            except Exception as fallback_err:
+                logger.error(f"Fallback LLM also failed: {fallback_err}")
+                answer = (
+                    "The NVIDIA AI service timed out while generating the financial summary. "
+                    "Please try resubmitting your request."
+                )
 
         return {
             "answer": answer,
@@ -123,9 +134,10 @@ class SummaryAgent:
         parts = []
         for i, chunk in enumerate(chunks):
             meta = chunk.get("metadata", {})
+            text = chunk.get("text", "")[:1200]
             parts.append(
                 f"[Document {i+1}: {meta.get('filename', 'Unknown')} | "
                 f"Page {meta.get('page_number', '?')}]\n"
-                f"{chunk['text']}"
+                f"{text}"
             )
         return "\n\n---\n\n".join(parts)

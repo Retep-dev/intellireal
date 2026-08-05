@@ -1,6 +1,7 @@
 """
 IntelliReal - Research Agent
 Answers factual questions about financial documents using RAG with precise citations.
+Includes automatic fallback model handling for NVIDIA NIM API timeouts.
 """
 
 import logging
@@ -48,7 +49,7 @@ class ResearchAgent:
         self.llm = ChatNVIDIA(
             model=settings.nvidia_model,
             api_key=settings.nvidia_api_key,
-            temperature=0.05,  # Very low temp for factual answers
+            temperature=0.05,
             max_tokens=settings.llm_max_tokens,
         )
 
@@ -60,15 +61,14 @@ class ResearchAgent:
     ) -> dict:
         """
         Execute research query against user's documents.
-        
-        Returns:
-            dict with answer, context_chunks, and thinking process
         """
+        settings = get_settings()
+
         # Retrieve relevant chunks
         chunks = await self.embedding_service.search(
             query=query,
             user_id=user_id,
-            top_k=8,  # Research agent gets more context
+            top_k=6,
             document_ids=document_ids,
         )
 
@@ -82,7 +82,6 @@ class ResearchAgent:
         # Build context
         context = self._format_context(chunks)
 
-        # Generate research answer
         messages = [
             SystemMessage(content=RESEARCH_SYSTEM_PROMPT.format(context=context)),
             HumanMessage(content=query),
@@ -92,8 +91,23 @@ class ResearchAgent:
             response = self.llm.invoke(messages)
             answer = response.content
         except Exception as e:
-            logger.error(f"Research Agent error: {e}")
-            answer = f"Research Agent encountered an error: {str(e)}"
+            logger.warning(f"Primary model ({settings.nvidia_model}) error/timeout: {e}. Retrying with fast model...")
+            try:
+                # Fallback to faster 8b model if 70b endpoint times out
+                fallback_llm = ChatNVIDIA(
+                    model="meta/llama-3.1-8b-instruct",
+                    api_key=settings.nvidia_api_key,
+                    temperature=0.1,
+                    max_tokens=2048,
+                )
+                response = fallback_llm.invoke(messages)
+                answer = response.content
+            except Exception as fallback_err:
+                logger.error(f"Fallback LLM also failed: {fallback_err}")
+                answer = (
+                    "The NVIDIA AI service timed out while generating a response. "
+                    "Please try rephrasing your question or switching to the **Summary Agent** tab."
+                )
 
         return {
             "answer": answer,
@@ -102,13 +116,14 @@ class ResearchAgent:
         }
 
     def _format_context(self, chunks: List[dict]) -> str:
-        """Format chunks into labeled context blocks."""
+        """Format chunks into labeled context blocks, trimmed for fast inference."""
         parts = []
         for i, chunk in enumerate(chunks):
             meta = chunk.get("metadata", {})
+            text = chunk.get("text", "")[:1200]  # Trim chunk length for fast execution
             parts.append(
                 f"[Document {i+1}: {meta.get('filename', 'Unknown')} | "
                 f"Page {meta.get('page_number', '?')}]\n"
-                f"{chunk['text']}"
+                f"{text}"
             )
         return "\n\n---\n\n".join(parts)

@@ -149,7 +149,7 @@ export default function ChatPanel() {
                     <div key={j} className="citation-card" title={citation.text_excerpt}>
                       📄 {citation.document_name}
                       {citation.page_number && ` · p.${citation.page_number}`}
-                      <span className="citation-score">
+                      <span className="citation-score" style={{ marginLeft: 6 }}>
                         {(citation.relevance_score * 100).toFixed(0)}%
                       </span>
                     </div>
