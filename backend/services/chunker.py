@@ -66,20 +66,14 @@ class DocumentChunker:
         pages: List[Dict],
         document_id: str,
         filename: str,
+        extra_metadata: Dict = None,
     ) -> List[TextChunk]:
         """
         Chunk a parsed document's pages into overlapping text chunks.
-        
-        Args:
-            pages: List of {"page": int, "text": str} from DocumentParser
-            document_id: Unique document identifier
-            filename: Original filename for metadata
-            
-        Returns:
-            List of TextChunk objects ready for embedding
         """
         all_chunks = []
         chunk_index = 0
+        extra = extra_metadata or {}
 
         for page_data in pages:
             page_num = page_data.get("page", 1)
@@ -102,6 +96,7 @@ class DocumentChunker:
                         document_id=document_id,
                         filename=filename,
                         page_number=page_num,
+                        metadata=extra,
                     )
                     all_chunks.append(chunk)
                     chunk_index += 1

@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import {
   BarChart2,
@@ -10,18 +11,20 @@ import {
   LogOut,
   Sparkles,
   PieChart,
+  Pin,
+  PinOff,
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 
-export default function Sidebar() {
+export default function Sidebar({ isPinned, setIsPinned }) {
   const { signOut } = useAuth();
   const location = useLocation();
 
   const isCurrent = (path) => location.pathname === path;
 
   return (
-    <aside className="sidebar-container">
-      {/* 1. Left Narrow Icon Rail */}
+    <aside className={`sidebar-container ${isPinned ? 'pinned' : ''}`}>
+      {/* 1. Left Narrow Icon Rail (56px) */}
       <div className="icon-rail">
         <div className="rail-logo" title="IntelliReal">
           <div className="rail-logo-icon">IR</div>
@@ -74,16 +77,32 @@ export default function Sidebar() {
         </div>
       </div>
 
-      {/* 2. Sub-Navigation Expansion Panel (GA4 Style) */}
+      {/* 2. Sub-Navigation Expansion Drawer (200px) */}
       <div className="subnav-panel">
         <div className="subnav-title">
-          <BarChart2 size={16} />
-          <span>Reports snapshot</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <BarChart2 size={16} />
+            <span>Reports snapshot</span>
+          </div>
+          <button
+            onClick={() => setIsPinned?.(!isPinned)}
+            style={{
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              color: 'var(--google-blue)',
+              display: 'flex',
+              alignItems: 'center',
+            }}
+            title={isPinned ? 'Unpin sidebar' : 'Pin sidebar open'}
+          >
+            {isPinned ? <PinOff size={14} /> : <Pin size={14} />}
+          </button>
         </div>
 
         <div>
           <div className="subnav-group-label">Life cycle</div>
-          
+
           <NavLink
             to="/"
             className={`subnav-item ${isCurrent('/') ? 'active' : ''}`}
@@ -108,7 +127,7 @@ export default function Sidebar() {
 
         <div>
           <div className="subnav-group-label">Financial Agents</div>
-          
+
           <div className="subnav-item active" style={{ background: 'transparent' }}>
             <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
               <Sparkles size={14} color="var(--google-blue)" /> Research Agent

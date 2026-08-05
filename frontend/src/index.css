@@ -1,5 +1,6 @@
 /* ============================================
    IntelliReal — Pristine GA4 Financial UI Theme
+   With Collapsible Hover-Expanding Sidebar Drawer
    ============================================ */
 
 @import url('https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Roboto:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap');
@@ -70,22 +71,32 @@ body {
   min-height: 100vh;
 }
 
-/* ── Sidebar System (Fixed Left) ── */
+/* ── GA4 Hover-Expanding Sidebar Drawer ── */
 .sidebar-container {
   position: fixed;
   top: 0;
   left: 0;
   bottom: 0;
-  width: var(--sidebar-total-width);
+  width: var(--rail-width); /* Default collapsed: 56px */
   z-index: 100;
   display: flex;
   background: var(--bg-surface);
   border-right: 1px solid var(--border-color);
+  transition: width 200ms cubic-bezier(0.4, 0, 0.2, 1), box-shadow 200ms ease;
+  overflow: hidden;
 }
 
-/* Left Icon Rail (56px) */
+/* Expand sidebar details panel on hover or when pinned open */
+.sidebar-container:hover,
+.sidebar-container.pinned {
+  width: var(--sidebar-total-width); /* 256px */
+  box-shadow: 4px 0 16px rgba(60, 64, 67, 0.15);
+}
+
+/* 1. Left Icon Rail (Always 56px) */
 .icon-rail {
   width: var(--rail-width);
+  flex-shrink: 0;
   background: var(--bg-surface);
   border-right: 1px solid var(--border-light);
   display: flex;
@@ -93,8 +104,6 @@ body {
   align-items: center;
   padding: 12px 0;
   gap: 8px;
-
-  flex-shrink: 0;
 }
 
 .rail-logo {
@@ -109,6 +118,7 @@ body {
   font-weight: 700;
   font-size: 14px;
   margin-bottom: 12px;
+  cursor: pointer;
 }
 
 .rail-item {
@@ -143,15 +153,30 @@ body {
   gap: 8px;
 }
 
-/* Sub-Navigation Panel (200px) */
+/* 2. Sub-Navigation Drawer Panel (200px) */
 .subnav-panel {
-  flex: 1;
+  width: var(--subnav-width);
+  flex-shrink: 0;
   background: var(--bg-app);
   padding: 16px 12px;
   display: flex;
   flex-direction: column;
   gap: 16px;
   overflow-y: auto;
+
+  /* Hidden by default until hovered or pinned */
+  opacity: 0;
+  transform: translateX(-10px);
+  pointer-events: none;
+  transition: opacity 150ms ease 50ms, transform 150ms ease 50ms;
+}
+
+/* Show details panel when hovering sidebar or when pinned */
+.sidebar-container:hover .subnav-panel,
+.sidebar-container.pinned .subnav-panel {
+  opacity: 1;
+  transform: translateX(0);
+  pointer-events: auto;
 }
 
 .subnav-title {
@@ -163,7 +188,7 @@ body {
   border-radius: var(--radius-pill);
   display: flex;
   align-items: center;
-  gap: 8px;
+  justify-content: space-between;
 }
 
 .subnav-group-label {
@@ -207,16 +232,22 @@ body {
   color: var(--text-secondary);
 }
 
-/* ── Main Area (Pushed past 256px sidebar) ── */
+/* ── Main Area (Aligned with 56px icon rail) ── */
 .app-main {
   flex: 1;
-  margin-left: var(--sidebar-total-width);
+  margin-left: var(--rail-width); /* 56px collapsed width */
   display: flex;
   flex-direction: column;
   min-width: 0;
+  transition: margin-left 200ms ease;
 }
 
-/* ── GA4 Fixed Top Header ── */
+/* If sidebar is pinned open, push app-main by 256px */
+.app-main.sidebar-pinned {
+  margin-left: var(--sidebar-total-width);
+}
+
+/* ── GA4 Fixed Top Header (Aligned with 56px icon rail) ── */
 .header {
   height: var(--header-height);
   background: var(--bg-surface);
@@ -228,8 +259,13 @@ body {
   position: fixed;
   top: 0;
   right: 0;
-  left: var(--sidebar-total-width);
+  left: var(--rail-width); /* 56px */
   z-index: 90;
+  transition: left 200ms ease;
+}
+
+.header.sidebar-pinned {
+  left: var(--sidebar-total-width);
 }
 
 .account-selector {

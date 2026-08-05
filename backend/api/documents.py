@@ -96,11 +96,18 @@ async def upload_document(
         # Step 2: Parse document
         parsed = parser.parse(file_bytes, file.filename)
 
-        # Step 3: Chunk the text
+        # Step 3: Chunk the text with extra metadata
+        extra_meta = {
+            "document_type": document_type.value,
+            "company": company,
+            "ticker": ticker,
+            "file_size": file_size,
+        }
         chunks = chunker.chunk_document(
             pages=parsed.pages,
             document_id=document_id,
             filename=file.filename,
+            extra_metadata=extra_meta,
         )
 
         # Step 4: Embed and store in ChromaDB
@@ -178,11 +185,23 @@ async def list_documents(
         except Exception as e:
             logger.warning(f"Failed to fetch documents from Supabase: {e}")
 
-    # Fallback: get stats from ChromaDB
+    # Fallback: get unique documents from ChromaDB if Supabase DB returns empty/error
     if not documents:
-        stats = await embedding_service.get_collection_stats(user_id)
-        if stats["total_chunks"] > 0:
-            logger.info(f"Returning ChromaDB stats: {stats}")
+        chroma_docs = await embedding_service.get_documents_from_chroma(user_id)
+        for doc in chroma_docs:
+            documents.append(
+                DocumentMetadata(
+                    id=doc["id"],
+                    filename=doc["filename"],
+                    document_type=doc.get("document_type", "other"),
+                    file_size=doc.get("file_size", 0),
+                    num_chunks=doc.get("num_chunks", 0),
+                    company=doc.get("company"),
+                    ticker=doc.get("ticker"),
+                    status=doc.get("status", "processed"),
+                    created_at=doc.get("created_at", datetime.utcnow()),
+                )
+            )
 
     return DocumentListResponse(documents=documents, total=len(documents))
 

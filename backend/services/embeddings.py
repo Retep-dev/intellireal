@@ -189,3 +189,35 @@ class EmbeddingService:
             "collection_name": self._get_collection_name(user_id),
             "total_chunks": count,
         }
+
+    async def get_documents_from_chroma(self, user_id: str) -> List[dict]:
+        """Fetch list of unique documents from ChromaDB chunk metadatas."""
+        from datetime import datetime
+        collection = self._get_collection(user_id)
+        if collection.count() == 0:
+            return []
+
+        results = collection.get(include=["metadatas"])
+        docs_map = {}
+
+        if results and results.get("metadatas"):
+            for meta in results["metadatas"]:
+                doc_id = meta.get("document_id")
+                if not doc_id:
+                    continue
+                if doc_id not in docs_map:
+                    docs_map[doc_id] = {
+                        "id": doc_id,
+                        "filename": meta.get("filename", "Unknown"),
+                        "document_type": meta.get("document_type", "other"),
+                        "file_size": meta.get("file_size", 0),
+                        "num_chunks": 0,
+                        "company": meta.get("company"),
+                        "ticker": meta.get("ticker"),
+                        "status": "processed",
+                        "created_at": datetime.utcnow(),
+                    }
+                docs_map[doc_id]["num_chunks"] += 1
+
+        return list(docs_map.values())
+
