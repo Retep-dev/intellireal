@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { Sparkles, CheckCircle2 } from 'lucide-react';
 
 export default function Signup() {
   const [fullName, setFullName] = useState('');
@@ -9,7 +10,7 @@ export default function Signup() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
-  const { signUp } = useAuth();
+  const { signUp, signIn } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -33,6 +34,18 @@ export default function Signup() {
     }
   };
 
+  const handleDemoLogin = async () => {
+    setLoading(true);
+    try {
+      await signIn('analyst@intellireal.com', 'demo123456');
+      navigate('/');
+    } catch (e) {
+      console.error('Demo login failed:', e);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   if (success) {
     return (
       <div className="auth-page">
@@ -41,17 +54,23 @@ export default function Signup() {
             <div className="auth-logo-icon">IR</div>
             <div className="auth-logo-text">IntelliReal</div>
           </div>
-          <div style={{ fontSize: 48, marginBottom: 16 }}>✉️</div>
-          <h3 style={{ color: 'var(--accent-green)', marginBottom: 8 }}>
-            Check Your Email
+          <div style={{ margin: '0 auto 16px', color: 'var(--google-green)' }}>
+            <CheckCircle2 size={48} />
+          </div>
+          <h3 style={{ color: 'var(--google-green)', marginBottom: 8 }}>
+            Account Registration Initiated
           </h3>
-          <p style={{ color: 'var(--text-secondary)', fontSize: 14 }}>
-            We've sent a confirmation link to <strong>{email}</strong>.
-            Click it to activate your account.
+          <p style={{ color: 'var(--text-secondary)', fontSize: 13, lineHeight: 1.5 }}>
+            A confirmation link was sent to <strong>{email}</strong>. Please check your email inbox to confirm your account.
           </p>
-          <Link to="/login" className="btn btn-primary" style={{ marginTop: 24, display: 'inline-flex' }}>
-            Back to Sign In
-          </Link>
+          <div style={{ marginTop: 24, display: 'flex', flexDirection: 'column', gap: 10 }}>
+            <button className="btn btn-primary" onClick={handleDemoLogin}>
+              <Sparkles size={14} /> Continue to App Immediately (Demo Mode)
+            </button>
+            <Link to="/login" className="btn btn-secondary" style={{ fontSize: 13 }}>
+              Back to Sign In
+            </Link>
+          </div>
         </div>
       </div>
     );
@@ -107,12 +126,24 @@ export default function Signup() {
             />
           </div>
 
-          <button className="btn btn-primary btn-lg" type="submit" disabled={loading}>
+          <button className="btn btn-primary btn-lg" type="submit" disabled={loading} style={{ width: '100%', marginBottom: 10 }}>
             {loading ? <div className="spinner" /> : 'Create Account'}
           </button>
         </form>
 
-        <div className="auth-footer">
+        <div style={{ marginTop: 10, textAlign: 'center' }}>
+          <button
+            type="button"
+            className="btn btn-secondary"
+            onClick={handleDemoLogin}
+            disabled={loading}
+            style={{ width: '100%', fontSize: 13, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}
+          >
+            <Sparkles size={14} color="var(--google-purple)" /> ⚡ Quick Demo Sign In
+          </button>
+        </div>
+
+        <div className="auth-footer" style={{ marginTop: 16 }}>
           Already have an account?{' '}
           <Link to="/login">Sign in</Link>
         </div>
