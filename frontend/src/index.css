@@ -1,5 +1,6 @@
 /* ============================================
-   IntelliReal — Pristine GA4 Financial UI Theme
+   IntelliReal — Complete GA4 Financial UI Theme
+   Supports Overview Dashboard & Chat AI Copilot
    ============================================ */
 
 @import url('https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Roboto:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap');
@@ -359,6 +360,229 @@ body {
   flex: 1;
 }
 
+/* ── GA4 Dashboard Toolbar & Card Grid System ── */
+.sub-header-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.page-title-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.page-title {
+  font-size: 22px;
+  font-weight: 400;
+  color: var(--text-primary);
+}
+
+.check-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 12px;
+  background: var(--google-green-light);
+  color: var(--google-green);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.filter-pills {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 16px;
+  border: 1px dashed var(--border-color);
+  background: var(--bg-surface);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--google-blue);
+  cursor: pointer;
+}
+
+.pill.active {
+  border-style: solid;
+  border-color: var(--google-blue);
+  background: var(--google-blue-light);
+}
+
+.toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.date-picker-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background: var(--bg-surface);
+  font-size: 12px;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.ga4-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.ga4-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 1px 2px rgba(60,64,67,0.05);
+  display: flex;
+  flex-direction: column;
+}
+
+.card-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: 12px;
+}
+
+.metric-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border-light);
+  margin: -20px -20px 16px -20px;
+  padding: 0 12px;
+  overflow-x: auto;
+}
+
+.metric-tab {
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  min-width: 130px;
+}
+
+.metric-tab:hover {
+  background: var(--bg-hover);
+}
+
+.metric-tab.active {
+  border-bottom-color: var(--google-blue);
+}
+
+.metric-tab-label {
+  font-size: 12px;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.metric-tab-value {
+  font-size: 22px;
+  font-weight: 400;
+  color: var(--text-primary);
+}
+
+.metric-tab-sub {
+  font-size: 11px;
+  color: var(--google-green);
+  font-weight: 500;
+}
+
+.realtime-header {
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-secondary);
+}
+
+.realtime-value {
+  font-size: 32px;
+  font-weight: 400;
+  margin: 4px 0 12px;
+}
+
+.top-list {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.top-list-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  padding: 6px 0;
+  border-bottom: 1px dashed var(--border-light);
+}
+
+.top-list-country {
+  color: var(--text-primary);
+  font-weight: 400;
+}
+
+.top-list-count {
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.realtime-link {
+  margin-top: auto;
+  padding-top: 16px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--google-blue);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+}
+
+.ga4-floating-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 1px 3px rgba(60,64,67,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  cursor: pointer;
+  z-index: 80;
+}
+
+.ga4-floating-btn:hover {
+  background: var(--bg-hover);
+  color: var(--google-blue);
+}
+
 /* ── Chat System & Markdown Formatting ── */
 .chat-container {
   display: flex;
@@ -470,7 +694,6 @@ body {
   margin-bottom: 10px;
 }
 
-/* Bullet Lists & Numbered Lists */
 .message-content ul, .message-content ol {
   margin: 8px 0 12px 20px;
   padding-left: 4px;
@@ -631,7 +854,6 @@ body {
   box-shadow: 0 1px 2px rgba(60,64,67,0.15);
 }
 
-/* Typing indicator */
 .typing-indicator {
   display: flex;
   gap: 4px;
@@ -726,6 +948,54 @@ body {
   border-radius: 8px; display: inline-flex;
   align-items: center; justify-content: center;
   font-weight: 700; font-size: 20px; margin-bottom: 8px;
+}
+
+.doc-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.doc-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  transition: background 150ms ease;
+  cursor: pointer;
+}
+
+.doc-item:hover {
+  background: var(--bg-hover);
+}
+
+.doc-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  background: var(--google-blue-light);
+  color: var(--google-blue);
+}
+
+.doc-info { flex: 1; }
+.doc-name { font-size: 13px; font-weight: 500; color: var(--text-primary); }
+.doc-meta { font-size: 11px; color: var(--text-tertiary); }
+.doc-status {
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 500;
+}
+.doc-status.processed {
+  background: var(--google-green-light);
+  color: var(--google-green);
 }
 
 .spinner {
