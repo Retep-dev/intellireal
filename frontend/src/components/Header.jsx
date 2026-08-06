@@ -44,15 +44,19 @@ export default function Header() {
     ? user.user_metadata.full_name.split(' ').map(n => n[0]).join('').toUpperCase()
     : user?.email?.[0]?.toUpperCase() || 'A';
 
+  const closeAllMenus = () => {
+    setShowWorkspaceMenu(false);
+    setShowAppsMenu(false);
+    setShowUserMenu(false);
+    setShowMoreMenu(false);
+    setShowSearchResults(false);
+  };
+
   // Close menus when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (headerRef.current && !headerRef.current.contains(event.target)) {
-        setShowWorkspaceMenu(false);
-        setShowAppsMenu(false);
-        setShowUserMenu(false);
-        setShowMoreMenu(false);
-        setShowSearchResults(false);
+        closeAllMenus();
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -87,7 +91,7 @@ export default function Header() {
   const handleSearchSubmit = (e) => {
     if (e) e.preventDefault();
     if (searchQuery.trim()) {
-      setShowSearchResults(false);
+      closeAllMenus();
       navigate(`/chat?query=${encodeURIComponent(searchQuery.trim())}`);
     }
   };
@@ -105,7 +109,11 @@ export default function Header() {
       <div style={{ position: 'relative' }}>
         <div
           className="account-selector"
-          onClick={() => setShowWorkspaceMenu(!showWorkspaceMenu)}
+          onClick={() => {
+            const next = !showWorkspaceMenu;
+            closeAllMenus();
+            setShowWorkspaceMenu(next);
+          }}
           style={{ cursor: 'pointer', userSelect: 'none' }}
         >
           <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -265,9 +273,9 @@ export default function Header() {
           className="icon-btn"
           title="IntelliReal Quick Apps"
           onClick={() => {
-            setShowAppsMenu(!showAppsMenu);
-            setShowUserMenu(false);
-            setShowMoreMenu(false);
+            const next = !showAppsMenu;
+            closeAllMenus();
+            setShowAppsMenu(next);
           }}
         >
           <Grid size={18} />
@@ -291,28 +299,28 @@ export default function Header() {
             gap: 8,
           }}>
             <div
-              onClick={() => { navigate('/chat'); setShowAppsMenu(false); }}
+              onClick={() => { navigate('/chat'); closeAllMenus(); }}
               style={{ padding: 10, borderRadius: 6, cursor: 'pointer', textAlign: 'center', background: 'var(--bg-hover)' }}
             >
               <MessageSquare size={20} color="var(--google-blue)" style={{ margin: '0 auto 4px' }} />
               <div style={{ fontSize: 12, fontWeight: 500 }}>Chat Copilot</div>
             </div>
             <div
-              onClick={() => { navigate('/documents'); setShowAppsMenu(false); }}
+              onClick={() => { navigate('/documents'); closeAllMenus(); }}
               style={{ padding: 10, borderRadius: 6, cursor: 'pointer', textAlign: 'center', background: 'var(--bg-hover)' }}
             >
               <FileText size={20} color="var(--google-green)" style={{ margin: '0 auto 4px' }} />
               <div style={{ fontSize: 12, fontWeight: 500 }}>Document Store</div>
             </div>
             <div
-              onClick={() => { navigate('/chat?agent=risk'); setShowAppsMenu(false); }}
+              onClick={() => { navigate('/chat?agent=risk'); closeAllMenus(); }}
               style={{ padding: 10, borderRadius: 6, cursor: 'pointer', textAlign: 'center', background: 'var(--bg-hover)' }}
             >
               <Shield size={20} color="var(--google-yellow)" style={{ margin: '0 auto 4px' }} />
               <div style={{ fontSize: 12, fontWeight: 500 }}>Risk Matrix</div>
             </div>
             <div
-              onClick={() => { navigate('/chat?agent=trend'); setShowAppsMenu(false); }}
+              onClick={() => { navigate('/chat?agent=trend'); closeAllMenus(); }}
               style={{ padding: 10, borderRadius: 6, cursor: 'pointer', textAlign: 'center', background: 'var(--bg-hover)' }}
             >
               <TrendingUp size={20} color="var(--google-purple)" style={{ margin: '0 auto 4px' }} />
@@ -325,7 +333,10 @@ export default function Header() {
         <button
           className="icon-btn"
           title="Platform Guide & FAQ"
-          onClick={() => setShowHelpModal(true)}
+          onClick={() => {
+            closeAllMenus();
+            setShowHelpModal(true);
+          }}
         >
           <HelpCircle size={18} />
         </button>
@@ -335,9 +346,9 @@ export default function Header() {
           className="icon-btn"
           title="More options"
           onClick={() => {
-            setShowMoreMenu(!showMoreMenu);
-            setShowAppsMenu(false);
-            setShowUserMenu(false);
+            const next = !showMoreMenu;
+            closeAllMenus();
+            setShowMoreMenu(next);
           }}
         >
           <MoreVertical size={18} />
@@ -361,7 +372,10 @@ export default function Header() {
             gap: 2,
           }}>
             <div
-              onClick={() => { setShowHelpModal(true); setShowMoreMenu(false); }}
+              onClick={() => {
+                closeAllMenus();
+                setShowHelpModal(true);
+              }}
               style={{
                 padding: '9px 12px',
                 borderRadius: 8,
@@ -382,7 +396,10 @@ export default function Header() {
             </div>
 
             <div
-              onClick={() => { navigate('/documents'); setShowMoreMenu(false); }}
+              onClick={() => {
+                closeAllMenus();
+                navigate('/documents');
+              }}
               style={{
                 padding: '9px 12px',
                 borderRadius: 8,
@@ -403,7 +420,10 @@ export default function Header() {
             </div>
 
             <div
-              onClick={() => { navigate('/chat?agent=research'); setShowMoreMenu(false); }}
+              onClick={() => {
+                closeAllMenus();
+                navigate('/chat?agent=research');
+              }}
               style={{
                 padding: '9px 12px',
                 borderRadius: 8,
@@ -426,7 +446,10 @@ export default function Header() {
             <div style={{ height: 1, background: 'var(--border-light)', margin: '4px 0' }} />
 
             <div
-              onClick={() => { signOut(); setShowMoreMenu(false); }}
+              onClick={() => {
+                closeAllMenus();
+                signOut();
+              }}
               style={{
                 padding: '9px 12px',
                 borderRadius: 8,
@@ -453,9 +476,9 @@ export default function Header() {
           className="user-avatar"
           title={user?.email || 'User Account'}
           onClick={() => {
-            setShowUserMenu(!showUserMenu);
-            setShowAppsMenu(false);
-            setShowMoreMenu(false);
+            const next = !showUserMenu;
+            closeAllMenus();
+            setShowUserMenu(next);
           }}
           style={{ userSelect: 'none' }}
         >
