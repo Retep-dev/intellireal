@@ -514,48 +514,128 @@ export default function Header() {
       {/* Help & FAQ Documentation Modal */}
       {showHelpModal && (
         <div className="modal-overlay" onClick={() => setShowHelpModal(false)}>
-          <div className="modal" onClick={(e) => e.stopPropagation()} style={{ maxWidth: 540 }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 16, fontWeight: 600 }}>
-                <HelpCircle color="var(--google-blue)" size={20} /> IntelliReal Guide & Documentation
+          <div className="modal" onClick={(e) => e.stopPropagation()} style={{ maxWidth: 580, borderRadius: 16, padding: 24 }}>
+            {/* Modal Header */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20, paddingBottom: 12, borderBottom: '1px solid var(--border-light)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                <div style={{
+                  width: 38,
+                  height: 38,
+                  borderRadius: 10,
+                  background: 'var(--google-blue-light)',
+                  color: 'var(--google-blue)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                  <BookOpen size={20} />
+                </div>
+                <div>
+                  <h3 style={{ fontSize: 16, fontWeight: 600, color: 'var(--text-primary)', margin: 0 }}>
+                    IntelliReal Guide & Documentation
+                  </h3>
+                  <p style={{ fontSize: 12, color: 'var(--text-secondary)', margin: 0 }}>
+                    Platform features, AI Agent capabilities, and filing ingestion guide
+                  </p>
+                </div>
               </div>
               <button
                 onClick={() => setShowHelpModal(false)}
-                style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-tertiary)' }}
+                style={{
+                  width: 30,
+                  height: 30,
+                  borderRadius: '50%',
+                  background: 'transparent',
+                  border: 'none',
+                  cursor: 'pointer',
+                  color: 'var(--text-tertiary)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  transition: 'background 150ms ease',
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.background = 'var(--bg-hover)'}
+                onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
               >
                 <X size={18} />
               </button>
             </div>
 
-            <div style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.6, display: 'flex', flexDirection: 'column', gap: 12 }}>
+            {/* Modal Content Sections */}
+            <div style={{ fontSize: 13, color: 'var(--text-secondary)', display: 'flex', flexDirection: 'column', gap: 16 }}>
+              {/* Section 1: 4 Financial AI Agents */}
               <div>
-                <strong style={{ color: 'var(--text-primary)' }}>🤖 4 Financial AI Agents:</strong>
-                <ul style={{ paddingLeft: 20, marginTop: 4 }}>
-                  <li><strong>Research Agent:</strong> Answers factual questions with exact document page citations.</li>
-                  <li><strong>Summary Agent:</strong> Creates executive summaries & financial KPI tables.</li>
-                  <li><strong>Risk Agent:</strong> Extracts litigation, credit covenant risk severity matrices.</li>
-                  <li><strong>Market Trends Agent:</strong> Analyzes YoY growth, margin trajectories, and guidance.</li>
-                </ul>
+                <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--google-blue)', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 8 }}>
+                  4 Specialized Financial AI Agents
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+                  <div style={{ padding: 10, borderRadius: 8, background: 'var(--google-blue-light)', border: '1px solid rgba(26,115,232,0.2)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontWeight: 600, color: 'var(--google-blue)', fontSize: 12.5, marginBottom: 2 }}>
+                      <Search size={14} /> Research Agent
+                    </div>
+                    <div style={{ fontSize: 11.5, color: 'var(--text-primary)', lineHeight: 1.4 }}>
+                      Answers factual questions with exact document page citations and numbers.
+                    </div>
+                  </div>
+
+                  <div style={{ padding: 10, borderRadius: 8, background: 'var(--google-green-light)', border: '1px solid rgba(19,115,51,0.2)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontWeight: 600, color: 'var(--google-green)', fontSize: 12.5, marginBottom: 2 }}>
+                      <FileText size={14} /> Summary Agent
+                    </div>
+                    <div style={{ fontSize: 11.5, color: 'var(--text-primary)', lineHeight: 1.4 }}>
+                      Generates structured executive summaries & financial KPI tables.
+                    </div>
+                  </div>
+
+                  <div style={{ padding: 10, borderRadius: 8, background: 'var(--google-yellow-light)', border: '1px solid rgba(176,96,0,0.2)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontWeight: 600, color: 'var(--google-yellow)', fontSize: 12.5, marginBottom: 2 }}>
+                      <Shield size={14} /> Risk Analysis
+                    </div>
+                    <div style={{ fontSize: 11.5, color: 'var(--text-primary)', lineHeight: 1.4 }}>
+                      Extracts litigation, credit liabilities, & risk severity matrices.
+                    </div>
+                  </div>
+
+                  <div style={{ padding: 10, borderRadius: 8, background: 'var(--google-purple-light)', border: '1px solid rgba(147,52,230,0.2)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontWeight: 600, color: 'var(--google-purple)', fontSize: 12.5, marginBottom: 2 }}>
+                      <TrendingUp size={14} /> Market Trends
+                    </div>
+                    <div style={{ fontSize: 11.5, color: 'var(--text-primary)', lineHeight: 1.4 }}>
+                      Analyzes YoY growth, margin trajectories, & guidance sentiment.
+                    </div>
+                  </div>
+                </div>
               </div>
 
-              <div>
-                <strong style={{ color: 'var(--text-primary)' }}>⚡ SEC EDGAR Automated Fetcher:</strong>
-                <p style={{ marginTop: 2 }}>
-                  Go to <strong>Documents &gt; Upload Document</strong> to fetch SEC filings directly by ticker symbol (e.g. <code>AAPL</code>, <code>MSFT</code>, <code>NVDA</code>) or click <strong>Pre-seed filings</strong> to populate the vector store instantly.
-                </p>
+              {/* Section 2: SEC EDGAR Auto-Fetcher */}
+              <div style={{ padding: 12, borderRadius: 8, background: 'var(--bg-app)', border: '1px solid var(--border-color)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontWeight: 600, color: 'var(--text-primary)', fontSize: 12.5, marginBottom: 4 }}>
+                  <Sparkles size={14} color="var(--google-purple)" /> SEC EDGAR Automated Fetcher
+                </div>
+                <div style={{ fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+                  Go to <strong>Documents &gt; Upload Document &gt; SEC EDGAR Tab</strong> to fetch SEC filings directly by ticker symbol (e.g., <code style={{ background: '#e8eaed', padding: '2px 5px', borderRadius: 4 }}>AAPL</code>, <code style={{ background: '#e8eaed', padding: '2px 5px', borderRadius: 4 }}>MSFT</code>, <code style={{ background: '#e8eaed', padding: '2px 5px', borderRadius: 4 }}>NVDA</code>) or click <strong>Pre-seed filings</strong> to auto-populate the ChromaDB vector store.
+                </div>
               </div>
 
+              {/* Section 3: Supported File Formats */}
               <div>
-                <strong style={{ color: 'var(--text-primary)' }}>📄 Supported File Formats:</strong>
-                <p style={{ marginTop: 2 }}>
-                  Upload <code>.pdf</code>, <code>.docx</code>, <code>.txt</code>, or <code>.html</code> reports up to 50MB.
-                </p>
+                <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 6 }}>
+                  Supported File Formats & Limits:
+                </div>
+                <div style={{ display: 'flex', gap: 8 }}>
+                  <span style={{ padding: '3px 8px', borderRadius: 12, background: 'var(--google-blue-light)', color: 'var(--google-blue)', fontSize: 11, fontWeight: 600 }}>.PDF</span>
+                  <span style={{ padding: '3px 8px', borderRadius: 12, background: 'var(--google-green-light)', color: 'var(--google-green)', fontSize: 11, fontWeight: 600 }}>.DOCX</span>
+                  <span style={{ padding: '3px 8px', borderRadius: 12, background: 'var(--google-yellow-light)', color: 'var(--google-yellow)', fontSize: 11, fontWeight: 600 }}>.TXT</span>
+                  <span style={{ padding: '3px 8px', borderRadius: 12, background: 'var(--google-purple-light)', color: 'var(--google-purple)', fontSize: 11, fontWeight: 600 }}>.HTML</span>
+                  <span style={{ fontSize: 11, color: 'var(--text-tertiary)', alignSelf: 'center', marginLeft: 'auto' }}>Max 50MB per file</span>
+                </div>
               </div>
             </div>
 
-            <div style={{ marginTop: 20, textAlign: 'right' }}>
-              <button className="btn btn-primary btn-sm" onClick={() => setShowHelpModal(false)}>
-                Got it
+            {/* Modal Footer Action */}
+            <div style={{ marginTop: 24, paddingTop: 12, borderTop: '1px solid var(--border-light)', textAlign: 'right' }}>
+              <button className="btn btn-primary" onClick={() => setShowHelpModal(false)} style={{ padding: '8px 20px' }}>
+                Got it, start analyzing
               </button>
             </div>
           </div>
