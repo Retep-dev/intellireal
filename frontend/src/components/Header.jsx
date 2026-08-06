@@ -15,6 +15,7 @@ import {
   LogOut,
   Sparkles,
   X,
+  BookOpen,
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { apiRequest } from '../lib/supabase';
@@ -348,31 +349,101 @@ export default function Header() {
             position: 'absolute',
             top: 'calc(100% + 8px)',
             right: 40,
-            width: 200,
+            width: 220,
             background: 'var(--bg-surface)',
             border: '1px solid var(--border-color)',
-            borderRadius: 8,
-            boxShadow: '0 4px 16px rgba(60,64,67,0.15)',
+            borderRadius: 12,
+            boxShadow: '0 4px 20px rgba(60,64,67,0.15)',
             zIndex: 300,
-            padding: '6px 0',
+            padding: 6,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 2,
           }}>
             <div
               onClick={() => { setShowHelpModal(true); setShowMoreMenu(false); }}
-              style={{ padding: '8px 14px', fontSize: 13, cursor: 'pointer' }}
+              style={{
+                padding: '9px 12px',
+                borderRadius: 8,
+                fontSize: 13,
+                fontWeight: 500,
+                color: 'var(--text-primary)',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 10,
+                transition: 'background 150ms ease',
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.background = 'var(--google-blue-light)'}
+              onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
             >
-              📖 Documentation Guide
+              <BookOpen size={16} color="var(--google-blue)" />
+              <span>Documentation Guide</span>
             </div>
+
             <div
               onClick={() => { navigate('/documents'); setShowMoreMenu(false); }}
-              style={{ padding: '8px 14px', fontSize: 13, cursor: 'pointer' }}
+              style={{
+                padding: '9px 12px',
+                borderRadius: 8,
+                fontSize: 13,
+                fontWeight: 500,
+                color: 'var(--text-primary)',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 10,
+                transition: 'background 150ms ease',
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.background = 'var(--google-green-light)'}
+              onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
             >
-              📂 Manage Documents
+              <FileText size={16} color="var(--google-green)" />
+              <span>Manage Documents</span>
             </div>
+
+            <div
+              onClick={() => { navigate('/chat?agent=research'); setShowMoreMenu(false); }}
+              style={{
+                padding: '9px 12px',
+                borderRadius: 8,
+                fontSize: 13,
+                fontWeight: 500,
+                color: 'var(--text-primary)',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 10,
+                transition: 'background 150ms ease',
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.background = 'var(--google-purple-light)'}
+              onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+            >
+              <Sparkles size={16} color="var(--google-purple)" />
+              <span>Financial AI Copilot</span>
+            </div>
+
+            <div style={{ height: 1, background: 'var(--border-light)', margin: '4px 0' }} />
+
             <div
               onClick={() => { signOut(); setShowMoreMenu(false); }}
-              style={{ padding: '8px 14px', fontSize: 13, cursor: 'pointer', color: 'var(--google-red)' }}
+              style={{
+                padding: '9px 12px',
+                borderRadius: 8,
+                fontSize: 13,
+                fontWeight: 500,
+                color: 'var(--google-red)',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 10,
+                transition: 'background 150ms ease',
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.background = 'var(--google-red-light)'}
+              onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
             >
-              🚪 Sign Out
+              <LogOut size={16} color="var(--google-red)" />
+              <span>Sign Out</span>
             </div>
           </div>
         )}
